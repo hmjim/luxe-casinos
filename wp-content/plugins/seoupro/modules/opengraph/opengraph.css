@@ -1,0 +1,23 @@
+
+#su-opengraph .form-table tr th {
+    width: 150px;
+}
+
+#su-opengraph table.widefat .su-og_type {
+    width: 100px;
+}
+
+#su-opengraph #su-default-values table.widefat td,
+#su-opengraph #su-default-values table.widefat th {
+    padding-right: 3em;
+}
+
+span.wpu-meta-title {
+    display: none;
+}
+
+p.admin_subtitle {
+    margin: 15px 0 15px;
+    font-size: 17px !important;
+    font-weight: 700;
+}

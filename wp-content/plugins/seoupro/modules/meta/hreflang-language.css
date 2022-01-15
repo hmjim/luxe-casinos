@@ -1,0 +1,21 @@
+
+#su-hreflang-language td {
+    vertical-align: middle;
+}
+
+#su-hreflang-language .su-hreflang-language-meta_tag_before {
+    padding-right: 0;
+}
+
+#su-hreflang-language td.su-hreflang-language-meta_tag_before {
+    text-align: right;
+}
+
+#su-hreflang-language .su-hreflang-language-meta_tag {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+#su-hreflang-language .su-hreflang-language-meta_tag_after {
+    padding-left: 0;
+}

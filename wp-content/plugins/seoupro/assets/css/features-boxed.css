@@ -1,0 +1,257 @@
+.features-boxed {
+  color: #313437;
+  background-color: #f2f2f2;
+}
+
+.features-boxed p {
+  color: #7d8285;
+}
+
+.features-boxed h2 {
+  font-weight: bold;
+  margin-bottom: 40px;
+  padding-top: 40px;
+  color: inherit;
+}
+
+@media (max-width:767px) {
+  .features-boxed h2 {
+    margin-bottom: 25px;
+    padding-top: 25px;
+    font-size: 24px;
+  }
+}
+
+.features-boxed .intro {
+  font-size: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.features-boxed .intro p {
+  margin-bottom: 0;
+}
+
+.features-boxed .features {
+  padding: 50px 0;
+}
+
+.features-boxed .item {
+  text-align: center;
+}
+
+.features-boxed .item .box {
+  text-align: center;
+  padding: 30px;
+  background-color: #fff;
+  margin-bottom: 30px;
+  /*
+  border: #ec9110;
+  border-style: solid;
+  border-width: 1px;
+  */
+
+}
+
+.features-boxed .item .icon {
+  font-size: 60px;
+  color: #1485ee;
+  margin-top: 20px;
+  margin-bottom: 35px;
+}
+
+.features-boxed .item .name {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 8px;
+  margin-top: 0;
+  color: inherit;
+}
+
+.features-boxed .item .description {
+  font-size: 15px;
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+.btndon {
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+.faicon {
+  color: #ec9110;
+}
+
+.btn-enable {
+  color: #fff;
+  background-color: #ec9110;
+  border-color: #ec9110;
+}
+.btn-enable:focus,
+.btn-enable.focus {
+  color: #fff;
+  background-color: #449d44;
+  border-color: #255625;
+}
+.btn-enable:hover {
+  color: #fff;
+  background-color: #449d44;
+  border-color: #398439;
+}
+.btn-enable:active,
+.btn-enable.active,
+.open > .dropdown-toggle.btn-success {
+  color: #fff;
+  background-color: #449d44;
+  border-color: #398439;
+}
+
+.btn-disable {
+  color: #fff;
+  background-color: #000;
+  border-color: #ec9110;
+}
+.btn-disable:focus,
+.btn-disable.focus {
+  color: #fff;
+  background-color: #449d44;
+  border-color: #255625;
+}
+.btn-disable:hover {
+  color: #fff;
+  background-color: red;
+  border-color: #398439;
+}
+.btn-disable:active,
+.btn-disable.active,
+.open > .dropdown-toggle.btn-success {
+  color: #fff;
+  background-color: #449d44;
+  border-color: #398439;
+}
+
+.name {
+  padding-top: 10px;
+}
+
+.a {
+  color: #000;
+}
+
+/* Added from seo.admin.css */
+
+img.rs-info-icon, img.og-info-icon {
+  width: 16px;
+  height: 16px;
+  float: right;
+}
+/* SEO Ultimate */
+.postmeta-seo-icon {
+  position: absolute;
+  top: 6px;
+  left: 10px
+}
+/*
+.form-control.nowidth-input {
+  width: auto;
+  min-width: 0;
+  display: inline;
+  margin: 0 5px;
+}
+
+/* POSTMETA BOX */
+#su-postmeta-box table th.su,
+#su-postmeta-box table td.su {
+  padding: 0.5em 0;
+}
+#su-postmeta-box table th.su {
+  text-align: right;
+  font-weight: bold;
+  padding-right: 0.5em;
+  white-space: nowrap;
+}
+#su-postmeta-box table tr[valign="top"] th.su {
+  padding-top: 0.7em;
+}
+#su-postmeta-box table tr.textarea th.su label {
+  display: block;
+  margin-top: 5px;
+}
+#su-postmeta-box table th.su em {
+  font-weight: normal;
+}
+#su-postmeta-box table td.su {
+  width: 100%;
+}
+#su-postmeta-box table td.su.group table {
+  border-spacing: 0;
+}
+#su-postmeta-box table td.su.group th {
+  text-align: right;
+  font-weight: normal;
+  white-space: nowrap;
+  padding: 0 0.5em;
+  vertical-align: middle;
+}
+#su-postmeta-box table td.su.group {
+  padding: 0.4em;
+}
+#su-postmeta-box table td.su.group td {
+  width: 100%;
+}
+#su-postmeta-box table,
+#su-postmeta-box table td input.regular-text,
+#su-postmeta-box table td textarea {
+  width: 100%;
+}
+#su-postmeta-box select optgroup,
+div.sdf-admin select optgroup {
+  margin-top: 1em;
+}
+#su-postmeta-box select optgroup option,
+div.sdf-admin select optgroup option {
+  margin-left: 1em;
+}
+#su-postmeta-box table.widefat {
+  width: auto;
+}
+#su-postmeta-box table.widefat td {
+  vertical-align: middle;
+}
+#su-postmeta-box .su-postmeta-box-footer {
+  color: #999;
+  margin: 0;
+  padding: 0.5em 1em;
+  text-align: right;
+}
+#su-postmeta-box .su-postmeta-box-footer a {
+  color: #999;
+  text-decoration: none;
+}
+#su-postmeta-box input[type="tel"] {
+  box-sizing: border-box;
+}
+
+#su-postmeta-box .su-tabs .su-tab-contents {
+  padding: 1em;
+  background-color: white;
+  border: 1px solid #dfdfdf;
+  border-top: 0 none;
+}

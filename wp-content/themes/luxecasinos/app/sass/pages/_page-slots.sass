@@ -1,0 +1,80 @@
+@import ../helpers/mixins
+@import ../base/variables
+
+.home
+
+	.slot
+		width: 25%
+		+r(991)
+			width: 33.3333%
+		+r(767)
+			width: 50%
+		+r(575)
+			width: 100%
+
+		&__btns
+			+r(1251)
+				padding: 15px 10px
+
+			.btn
+				+r(1251)
+					padding: 8px 15px
+					font-size: 15px
+
+				&-demo
+					+r(1251)
+						padding: 7px 15px
+
+.slot
+	width: 33.3333%
+	padding-left: 15px
+	padding-right: 15px
+	margin-bottom: 30px
+	+r(1259)
+		width: 50%
+	+r(991)
+		width: 33.3333%
+	+r(767)
+		width: 50%
+	+r(575)
+		width: 100%
+
+	&__inner
+		max-width: 270px
+		margin: 0 auto
+		display: flex
+		flex-direction: column
+		height: 100%
+		position: relative
+		background-color: $color-widget
+		border-radius: $border-radius
+		overflow: hidden
+
+	&__title
+		padding: 15px 20px
+		font-size: 18px
+		line-height: 21px
+		color: $color-white
+		text-align: center
+		text-decoration: none
+		+r(1259)
+			font-size: 16px
+
+	&__btns
+		padding: 15px 20px
+		display: flex
+		justify-content: center
+		align-items: center
+		transition: $transition-fast
+		+r(991)
+			padding: 15px 10px
+
+		.btn
+			+r(991)
+				padding: 8px 15px
+				font-size: 15px
+
+			&-demo
+				margin-right: 10px
+				+r(991)
+					padding: 7px 15px

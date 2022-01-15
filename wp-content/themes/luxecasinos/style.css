@@ -1,0 +1,91 @@
+/*
+Theme Name: luxecasinos
+Version: 1.1
+Description: luxecasinos
+Author: sercraft
+*/
+
+/*Стандартные стили*/
+.alignnone {
+    margin: 5px 40px 20px 0;
+}
+.aligncenter, div.aligncenter {
+    margin: auto;
+}
+.alignright {
+    float:right;
+    margin: 5px 0 20px 40px;
+}
+.alignleft {
+    float:left;
+    margin: 5px 40px 20px 0;
+}
+.aligncenter {
+    display: block;
+    margin: 5px auto 5px auto;
+}
+a img.alignright {
+    float:right;
+    margin: 5px 0 20px 40px;
+}
+a img.alignnone {
+    margin: 5px 40px 20px 0;
+}
+a img.alignleft {
+    float:left;
+    margin: 5px 40px 20px 0;
+}
+a img.aligncenter {
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+.wp-caption {
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    max-width: 96%;
+    padding: 5px 3px 10px;
+    text-align: center;
+}
+.wp-caption.alignnone {
+    margin: 5px 40px 20px 0;
+}
+.wp-caption.alignleft {
+    margin: 5px 40px 20px 0;
+}
+.wp-caption.alignright {
+    margin: 5px 0 20px 40px;
+}
+.wp-caption img {
+    border: 0 none;
+    height: auto;
+    margin:0;
+    max-width: 98.5%;
+    padding:0;
+    width: auto;
+}
+.wp-caption p.wp-caption-text {
+    font-size:11px;
+    line-height:17px;
+    margin:0;
+    padding:0 4px 5px;
+}
+
+#slb_viewer_wrap .slb_theme_slb_default .slb_data_content {
+  display: flex;
+  flex-wrap: wrap;
+}
+#slb_viewer_wrap .slb_theme_slb_default .slb_data_title,
+#slb_viewer_wrap .slb_theme_slb_default .slb_group_status {
+  font-family: Noto Sans, sans-serif!important;
+  font-size: 14px!important;
+  display: inline-block;
+}
+#slb_viewer_wrap .slb_theme_slb_default .slb_data_title {
+  margin-right: 1em!important;
+  flex-grow: 1;
+}
+#slb_viewer_wrap .slb_theme_slb_default .slb_group_status {
+  font-size: 14px!important;
+  margin-right: .2em!important;
+}

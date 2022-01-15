@@ -1,0 +1,85 @@
+.pagination
+	padding: 10px 0 0
+	display: block
+	margin-bottom: 40px
+
+	ul
+		padding: 0
+		margin: 0
+		display: flex
+		justify-content: center
+		align-items: center
+		list-style-type: none
+
+	li
+		display: inline-flex
+		height: 40px
+		margin: 0 4px
+		text-align: center
+		position: relative
+		+r(575)
+			margin: 0 1px
+		+r(374)
+			height: 30px
+
+	a,
+	span
+		display: block
+		width: 40px
+		height: 100%
+		color: $color-green-light
+		font-size: 16px
+		line-height: 40px
+		border-radius: 15px
+		text-decoration: none
+		position: relative
+		border: 1px solid transparent
+		+r(575)
+			width: 40px
+			line-height: 40px
+		+r(374)
+			width: 30px
+			line-height: 30px
+
+	a
+
+		&.prev,
+		&.next
+			border: 1px solid $color-white
+
+			span
+				display: none
+
+			&::before
+				position: absolute
+				content: ''
+				width: 10px
+				height: 10px
+				left: 50%
+				top: 50%
+				border: solid $color-white
+				box-sizing: border-box
+				transform: translate(-50%, -50%) rotate(45deg)
+
+			&:hover
+
+				&::before
+					border-color: $color-green-light
+
+		&.prev
+
+			&::before
+				border-width: 0 0 2px 2px
+
+		&.next
+
+			&::before
+				border-width: 2px 2px 0 0
+
+		&:hover
+			border: 1px solid $color-green-light
+
+	.current
+		color: $color-green-light
+		text-decoration: none
+		border: 1px solid $color-green-light

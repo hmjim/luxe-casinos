@@ -1,0 +1,289 @@
+@import ../helpers/mixins
+@import ../base/variables
+
+.container
+	width: 100%
+	padding-right: 15px
+	padding-left: 15px
+	margin-right: auto
+	margin-left: auto
+	+rmin(1260)
+		max-width: 1200px
+	+rmin(992)
+		max-width: 960px
+	+rmin(768)
+		max-width: 720px
+	+rmin(576)
+		max-width: 540px
+
+.row
+	display: flex
+	flex-wrap: wrap
+	margin-left: -15px
+	margin-right: -15px
+
+.item
+	width: 100%
+	padding-left: 15px
+	padding-right: 15px
+
+.content
+
+	&__wrapper
+		padding: 50px 0 0
+		margin-bottom: 100px
+		+r(991)
+			margin-bottom: 0
+
+		&.no-padding
+			padding-top: 0
+
+		&.mb40
+			margin-bottom: 40px
+
+	&__inner
+		display: flex
+		flex-wrap: wrap
+		margin-left: -15px
+		margin-right: -15px
+
+	&__main
+		padding-left: 15px
+		padding-right: 15px
+		width: 75%
+		+r(1259)
+			width: 66.66667%
+		+r(991)
+			width: 100%
+			margin-bottom: 50px
+
+		&.no-sidebar
+			width: 100%
+
+	&__sidebar
+		padding-left: 15px
+		padding-right: 15px
+		width: 25%
+		+r(1259)
+			width: 33.33333%
+		+r(991)
+			width: 100%
+			margin-bottom: 50px
+
+.the_content
+
+	&-bg
+		padding: 30px
+		color: $color-white
+		background-color: $color-widget
+		border-radius: $border-radius
+		+r(575)
+			padding: 20px 15px
+
+		.screens-box
+			margin-left: -30px
+			margin-right: -30px
+
+	a
+		color: $color-green-light
+		text-decoration: none
+
+		&:hover,
+		&:focus,
+		&:active
+			color: $color-orange
+
+	img
+		height: auto
+
+	ul,
+	ol
+		margin: 0 0 25px
+		padding: 0 0 0 30px
+		list-style-type: none
+		+r(575)
+			padding: 0
+
+		li
+			padding-left: 40px
+			margin-bottom: 10px
+			position: relative
+			+pseudo(after)
+				width: 20px
+				height: 20px
+				top: 0
+				left: 0
+				border: 3px solid rgba($color-orange, .2)
+				border-radius: 50%
+
+	ul
+
+		li
+			+pseudo(before)
+				width: 8px
+				height: 8px
+				top: 6px
+				left: 6px
+				background-color: $color-orange
+				border-radius: 50%
+
+	ol
+		counter-reset: list
+
+		li
+			+pseudo(before)
+				counter-increment: list
+				content: counter(list)
+				width: 20px
+				height: 20px
+				top: 0
+				left: 0
+				color: $color-orange
+				font-size: 12px
+				line-height: 20px
+				text-align: center
+
+	&.page_descr
+		//font-size: 22px
+		color: $color-white
+		margin-bottom: 40px
+		//+r(991)
+		//	font-size: 19px
+		//+r(767)
+		//	font-size: 16px
+
+.main_content
+	margin-bottom: 80px
+
+.page_title
+	font-size: 38px
+	line-height: 50px
+	margin: 0 0 20px
+	+r(991)
+		font-size: 28px
+		line-height: 45px
+	+r(767)
+		font-size: 24px
+		line-height: 35px
+
+.section
+	margin-bottom: 100px
+
+.section-header
+	display: flex
+	justify-content: space-between
+	align-items: flex-start
+	margin-bottom: 25px
+	+r(767)
+		flex-direction: column
+
+	h2
+		padding: 4px 0
+		margin: 0
+		+r(767)
+			margin: 0 0 15px
+
+.screens-box
+	margin: 0 0 30px
+	padding: 30px
+	background-color: $color-text
+
+	.swiper-slide
+		text-align: center
+
+	.swiper-pagination-bullets
+		padding-top: 15px
+		display: flex
+		justify-content: center
+
+	.swiper-pagination-bullet
+		width: 10px
+		height: 10px
+		background-color: $color-white
+		opacity: 1
+		border-radius: $border-radius
+		transition: $transition
+
+		&.swiper-pagination-bullet-active
+			width: 30px
+			height: 10px
+			background-color: $color-green-light
+
+
+#toc_container
+	background-color: rgba($color-widget, .7)
+	border: 0
+	border-radius: 5px
+	width: 100%
+	padding: 20px
+
+	li
+
+		&::before,
+		&::after
+			display: none
+
+	a
+		display: inline-block
+		margin-bottom: 5px
+		text-decoration: none
+		color: $color-green-light
+
+	.toc_number
+		color: $color-orange
+		font-weight: 700
+
+	p
+
+		&.toc_title
+			font-size: 20px
+			text-align: left
+
+.no-posts
+	padding-left: 15px
+	padding-right: 15px
+
+.percent-bar
+	display: block
+	position: relative
+
+	svg
+		position: relative
+		width: 100%
+		height: 100%
+
+		circle
+			width: 100%
+			height: 100%
+			fill: none
+			transform-origin: 50% 50%
+			stroke-linecap: round
+
+	.count
+		position: absolute
+		width: 42px
+		height: 42px
+		top: 50%
+		left: 50%
+		transform: translate(-50%, -50%)
+		font-weight: 500
+		font-size: 20px
+		line-height: 42px
+		text-align: center
+		background-color: rgba(#73CA2F, .2)
+		border-radius: 50%
+
+	.thumb
+		position: absolute
+		top: 15px
+		left: 15px
+		border-radius: 50%
+
+	.number
+		position: absolute
+		bottom: 0
+		right: -20px
+		font-weight: 700
+		font-size: 20px
+		line-height: 18px
+		color: rgba( $color-blue-medium, .5 )

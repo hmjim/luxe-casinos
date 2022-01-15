@@ -1,0 +1,55 @@
+.footer
+
+	&__wrapper
+		padding: 50px 0
+		background-color: $color-widget
+
+	&__top
+		display: flex
+		justify-content: space-between
+		align-items: center
+		margin-bottom: 40px
+		+r(991)
+			flex-direction: column
+
+	&__logo
+		margin-right: 70px
+		+r(991)
+			margin-right: 0
+			margin-bottom: 30px
+
+	&__bottom
+		display: flex
+		align-items: center
+		justify-content: space-between
+		+r(767)
+			flex-direction: column
+
+	&__copyright,
+	&__limit
+		font-size: 14px
+		line-height: 25px
+		color: $color-green-light
+
+	&__copyright
+		margin-right: 65px
+		+r(767)
+			margin-right: 0
+			order: 2
+			text-align: center
+
+	&__limit
+		padding-left: 35px
+		position: relative
+		+r(767)
+			margin-bottom: 20px
+			text-align: center
+
+		&::before
+			position: absolute
+			content: ''
+			width: 20px
+			height: 20px
+			top: calc(50% - 10px)
+			left: 0
+			+svg(limit)

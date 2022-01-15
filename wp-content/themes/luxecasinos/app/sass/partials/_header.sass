@@ -1,0 +1,107 @@
+@import ../helpers/mixins
+@import ../base/variables
+
+.header
+
+	&__wrapper
+		background-color: $color-widget
+		padding: 22px 0
+		+r(991)
+			padding: 15px 0
+
+	&__inner
+		display: flex
+		flex-wrap: wrap
+		align-items: center
+		+r(991)
+			justify-content: space-between
+
+	&__logo
+		display: none
+		+r(991)
+			display: block
+			flex-grow: 1
+
+		a
+			+r(575)
+				display: inline-block
+				max-width: 160px
+			+r(374)
+				max-width: 120px
+
+	&__btns
+		display: flex
+
+	&__favorites
+
+		&-btn
+			width: 26px
+			height: 26px
+			+svg(favorites)
+			background-repeat: no-repeat
+			background-position: center
+
+	&__search
+		padding-top: 10px
+		width: 100%
+		display: none
+		order: 4
+
+		&-btn
+			width: 26px
+			height: 26px
+			position: relative
+			background-image: linear-gradient(90deg, #FF2053 0%, #FF3F00 100%)
+			border-radius: 50%
+			margin-left: 15px
+			cursor: pointer
+			order: 2
+			+r(374)
+				margin-left: 20px
+				width: 50px
+				height: 50px
+				border-radius: 4px
+
+			&::before
+				position: absolute
+				content: ''
+				width: 100%
+				height: 100%
+				+svg(search)
+				background-repeat: no-repeat
+				background-position: center
+
+			&.is-open
+
+				&::before
+					+svg(close)
+
+		&.is-open
+			display: block
+
+		.cf
+			display: flex
+
+			input
+				height: 50px
+				border: 0
+				outline: none
+				background-color: #375a9e
+
+				&[type=search]
+					padding: 0 38px
+					border-radius: $border-radius 0 0 $border-radius
+					flex-grow: 1
+					+placeholder-color(#162251)
+					+r(991)
+						padding: 0 20px
+
+				&[type=submit]
+					width: 60px
+					+svg(search)
+					background-repeat: no-repeat
+					background-position: center
+					background-size: 20px
+					border-radius: 0 $border-radius $border-radius 0
+					+r(575)
+						width: 40px

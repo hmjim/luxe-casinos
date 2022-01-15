@@ -1,0 +1,95 @@
+.ref-banner
+
+	&__wrapper
+		margin-bottom: 100px
+
+	&__inner
+		display: flex
+		background: $color-white
+		border: 2px solid rgba(46, 71, 215, 0.5)
+		border-radius: 30px
+		+r(991)
+			flex-wrap: wrap
+
+	&__info
+		position: relative
+		display: flex
+		flex-grow: 1
+		+r(575)
+			flex-direction: column
+			align-items: center
+
+		&::before
+			position: absolute
+			content: 'выбор пользователей'
+			width: 242px
+			top: -17px
+			left: 50%
+			transform: translateX(-50%)
+			padding: 5px 15px
+			background-color: $color-blue-medium
+			border-radius: 20px
+			text-transform: uppercase
+
+	&__logo
+		padding: 30px 30px 30px 60px
+		+r(575)
+			padding: 40px 30px 30px
+
+	&__bonus
+		flex-grow: 1
+		display: flex
+		justify-content: center
+		align-items: center
+		flex-direction: column
+		+r(575)
+			margin-bottom: 30px
+
+		&-count
+			display: flex
+			align-items: center
+			margin: 0 0 15px
+
+			i
+				display: inline-block
+				width: 38px
+				height: 36px
+				margin-right: 15px
+				+svg(gift)
+
+			span
+				padding-top: 5px
+				display: inline-block
+				font-weight: 700
+				font-size: 30px
+				line-height: 27px
+				background-image: linear-gradient(180deg, #2E47D7 0%,#fff 100%)
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2e47d7', endColorstr='#ffffff',GradientType=1 )
+				-webkit-background-clip: text
+				-webkit-text-fill-color: transparent
+
+		&-title
+			color: $color-dark
+			font-size: 17px
+			line-height: 24px
+			margin: 0
+
+	&__nav
+		padding: 25px 123px
+		display: flex
+		justify-content: center
+		flex-direction: column
+		background-color: $color-blue-light
+		border-radius: 0 28px 28px 0
+		text-align: center
+		+r(1259)
+			padding: 25px 50px
+		+r(991)
+			padding: 25px 100px
+			width: 100%
+			border-radius: 0 0 28px 28px
+
+		.btn
+
+			&-light
+				margin-bottom: 15px

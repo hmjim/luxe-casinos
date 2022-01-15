@@ -1,0 +1,114 @@
+.main-slot
+	display: flex
+	flex-direction: column
+
+	&__wrapper
+		margin-bottom: 50px
+
+	&__inner
+		display: flex
+		flex-direction: column
+		border-radius: 15px
+		background-color: $color-widget
+		margin-bottom: 30px
+		+r(767)
+			order: 2
+			margin-bottom: 0
+
+	&__header
+		padding: 15px 25px
+		text-align: right
+
+	iframe
+		border: 0
+
+	&__nav
+		padding: 10px 20px
+		display: flex
+		justify-content: space-between
+		align-items: center
+		font-size: 24px
+		border-radius: 0 0 $border-radius $border-radius
+
+		&-rating
+			display: flex
+			align-items: center
+			flex-direction: column
+			color: $color-grey
+			font-size: 18px
+			line-height: 25px
+
+			&-title
+				font-size: 12px
+				line-height: 12px
+				margin: 0 0 5px
+				flex-shrink: 0
+				+r(575)
+					display: none
+
+			.post-ratings
+
+				img
+					padding: 0 1px
+
+		&-favorite,
+		&-feedback,
+		&-maximize
+			width: 36px
+			height: 36px
+			cursor: pointer
+
+		&-favorite
+
+			.icon-star-empty,
+			.icon-star-full
+				display: block
+				width: 36px
+				height: 36px
+				background-size: cover
+
+			.icon-star-empty
+				+svg(star-empty)
+
+			.icon-star-full
+				+svg(star-filled)
+
+		&-feedback
+			+svg(feedback)
+
+		&-maximize
+			+svg(fullscreen)
+
+		.btn
+			font-weight: 600
+			font-size: 18px
+			line-height: 22px
+			text-transform: uppercase
+			width: calc(100% - 20px)
+
+	&__btn
+		padding: 15px 25px
+		+r(767)
+			order: 1
+			margin-bottom: 30px
+
+	&.fullscreen
+		position: fixed
+		display: flex
+		flex-direction: column
+		top: 0
+		left: 0
+		width: 100vw
+		height: 100vh
+		padding: 40px 57px 40px 40px
+		background-color: #f0f1f2
+		z-index: 10
+		margin-bottom: 0
+		+r(767)
+			padding: 20px 37px 20px 20px
+		+r(575)
+			padding: 15px 32px 15px 15px
+
+		.main-slot__inner,
+		iframe
+			flex-grow: 1

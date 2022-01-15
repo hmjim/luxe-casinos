@@ -1,0 +1,66 @@
+.anchor
+
+	//&__wrapper
+	//	margin-bottom: 100px
+
+	&__inner
+		display: flex
+		flex-wrap: wrap
+		margin: 0 -15px
+
+	&__content
+		width: 75%
+		padding-left: 15px
+		padding-right: 15px
+		+r(991)
+			width: 100%
+			margin-left: 0
+			order: 2
+
+		&-section
+
+			&:not(:last-child)
+				margin-bottom: 40px
+
+	&__sidebar
+		width: 25%
+		padding-left: 15px
+		padding-right: 15px
+		position: relative
+		+r(991)
+			width: 100%
+			margin-bottom: 30px
+			order: 1
+
+	&__menu
+		margin: 0
+		padding: 25px
+		list-style-type: none
+		background-color: rgba($color-widget, .7)
+		counter-reset: menu
+		border-radius: 10px
+
+		li
+			padding-left: 25px
+
+			&:not(:last-child)
+				margin-bottom: 15px
+
+		a
+			color: $color-white
+			text-decoration: none
+			position: relative
+
+			&::before
+				counter-increment: menu
+				content: counter(menu)'.'
+				position: absolute
+				top: 0
+				left: -25px
+				color: $color-white
+
+			&:hover
+				color: $color-green-light
+
+				&::before
+					color: $color-green-light

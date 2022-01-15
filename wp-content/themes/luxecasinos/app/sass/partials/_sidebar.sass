@@ -1,0 +1,412 @@
+@import ../helpers/mixins
+@import ../base/variables
+
+.custom-widget
+	max-width: 270px
+	margin: 0 auto
+
+	&:not(:last-child)
+		margin-bottom: 40px
+
+	&__title
+		padding: 25px 25px 0
+		margin: 0
+		color: $color-orange
+		font-size: 18px
+		font-weight: 500
+		line-height: 25px
+		text-align: center
+		text-transform: uppercase
+		background-color: rgba($color-widget, .7)
+		border-radius: 10px 10px 0 0
+		display: flex
+		align-items: center
+		justify-content: center
+
+		svg
+			margin-right: 15px
+
+	&__list,
+	&__content
+		margin: 0
+		background-color: rgba($color-widget, .7)
+
+	&__list
+		padding: 25px
+		list-style-type: none
+		border-radius: 0 0 10px 10px
+
+	&__content
+		padding: 20px 25px
+		border-radius: 10px
+
+	// widget top casino
+	&__casino
+
+		&-list
+			counter-reset: cas
+			padding: 16px 25px 30px
+
+		&-item
+			border-radius: 30px
+
+			&:not(:last-child)
+				margin-bottom: 20px
+
+			&:nth-child(1)
+
+				.thumb
+					border-color: $color-gold
+
+			&:nth-child(2)
+
+				.thumb
+					border-color: $color-silver
+
+			&:nth-child(3)
+
+				.thumb
+					border-color: $color-bronze
+
+		&-img
+			display: block
+			width: 150px
+			margin: 0 auto 20px
+			color: $color-white
+			border-radius: 50%
+			position: relative
+
+			.thumb
+				border-width: 4px
+				border-style: solid
+				border-radius: 50%
+
+			.percent-bar
+				position: absolute
+				top: -4px
+				right: -39px
+				padding: 4px
+				background-color: #2C4040
+				border-radius: 50%
+
+				.count
+					background-color: #565943
+
+		&-nav
+			display: flex
+			justify-content: space-between
+
+			.btn-review,
+			.btn-site
+				width: 105px
+
+
+	// widget top slots
+	&__slot
+
+		&-item
+			display: flex
+			align-items: center
+			text-decoration: none
+
+			&-wrap
+
+				&:not(:last-child)
+					margin-bottom: 10px
+
+		&-thumb
+			display: block
+			flex-shrink: 0
+			position: relative
+
+			img
+				border-radius: 15px
+
+		&-info
+			flex-grow: 1
+			display: flex
+			justify-content: center
+			flex-wrap: wrap
+
+		&-position,
+		&-rate
+			padding: 3px 10px
+			color: #FFF
+			font-size: 11px
+			line-height: 13px
+			text-align: center
+			border-radius: 40px
+			margin-bottom: 8px
+
+		&-position
+			border: 1px solid #00FF24
+			box-sizing: border-box
+			margin-right: 5px
+
+		&-rate
+			display: flex
+			align-items: center
+			background: linear-gradient(90deg, #FF2053 0%, #FF3F00 100%)
+
+			svg
+				margin-right: 3px
+
+		&-title
+			width: 100%
+			padding: 0 10px
+			margin: 0
+			font-size: 14px
+			line-height: 16px
+			color: #fff
+			text-decoration: none
+			text-align: center
+			position: relative
+			+r(1259)
+				font-size: 16px
+
+
+	// widget related slots
+	&__slot-related
+
+		&-item
+			display: flex
+			align-items: center
+			width: 100%
+
+			&:not(:last-child)
+				margin-bottom: 15px
+
+		&-img
+			flex-shrink: 0
+			position: relative
+			margin-right: 20px
+			cursor: pointer
+
+			img
+				border-radius: 15px
+
+		&-text
+			width: calc(100% - 95px)
+			display: flex
+			flex-direction: column
+			justify-content: center
+			flex-grow: 1
+
+		&-title
+			color: $color-white
+			font-size: 16px
+			line-height: 22px
+			pointer-events: none
+			white-space: nowrap
+			overflow: hidden
+			text-overflow: ellipsis
+			max-width: 100%
+			margin-bottom: 10px
+
+
+	// widget slot of day
+	&__slot-day
+
+		&-item
+			display: block
+			text-decoration: none
+
+		&-img
+			border-radius: 30px 30px 0 0
+
+		&-text
+			width: 100%
+			display: flex
+			padding: 30px 15px 15px
+			text-align: center
+			flex-direction: column
+			background-color: $color-white
+			border-radius: 30px
+			position: relative
+			top: -30px
+
+			&::before
+				position: absolute
+				content: 'top'
+				top: -15px
+				left: 50%
+				transform: translateX(-50%)
+				padding: 5px 15px
+				color: $color-white
+				font-size: 14px
+				line-height: 20px
+				text-align: center
+				text-transform: uppercase
+				background-color: $color-blue
+				border-radius: 15px
+
+		&-title
+			color: $color-text
+			font-size: 20px
+			line-height: 22px
+			font-weight: 500
+			margin-bottom: 15px
+
+		&-wins,
+		&-total
+			color: $color-dark
+			font-size: 17px
+			line-height: 24px
+
+			span
+				font-weight: 700
+				font-size: 30px
+				line-height: 36px
+				background-image: linear-gradient(135deg, #2e47d7 0%, #fff 100%)
+				filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2e47d7', endColorstr='#ffffff', GradientType=1)
+				-webkit-background-clip: text
+				-webkit-text-fill-color: transparent
+
+		&-wins
+			margin-bottom: 7px
+
+
+	// widget developers
+	&__dev
+
+		&-list
+			counter-reset: devs
+
+		&-item
+			display: block
+			text-decoration: none
+			font-size: 16px
+
+			&:hover
+				color: #998BC5
+
+			&-wrap
+
+				&:not(:last-child)
+					margin-bottom: 10px
+
+		&-img
+			display: flex
+			align-items: center
+			justify-content: center
+			padding: 20px
+			height: 90px
+			border: 1px solid #00FF24
+			border-radius: $border-radius
+			position: relative
+			z-index: 1
+
+			img
+				max-height: 100%
+
+		&-title
+			width: 110px
+			display: flex
+			align-items: center
+			padding: 5px 10px
+			color: $color-text
+			font-size: 12px
+			line-height: 14px
+			text-align: center
+			background-color: rgba($color-white, .35)
+			border-radius: 0 0 10px 10px
+			position: relative
+			top: 0
+			left: 50%
+			transform: translateX(-50%)
+
+			svg,
+			span
+				margin-right: 5px
+
+
+	// widget links
+	&__links
+
+		&-item
+
+			&:not(:last-child)
+				margin-bottom: 10px
+
+			a
+				font-size: 16px
+				line-height: 22px
+				text-decoration: none
+				color: #FFFFFF
+
+				&:hover,
+				&:focus,
+				&:active
+					color: #998BC5
+
+
+	// widget search
+	&__search
+
+		.cf
+			display: flex
+			align-items: center
+
+		input
+			background-color: transparent
+			border: 0
+			padding: 0
+
+			&[type=submit]
+				width: 20px
+				height: 20px
+				margin-right: 10px
+				+svg(search)
+				flex-shrink: 0
+
+			&[type=search]
+				color: $color-green-light
+				font-weight: 500
+				font-size: 18px
+				line-height: 20px
+				width: 100%
+				flex-grow: 1
+				outline: none
+				+placeholder-color($color-green-light)
+
+
+	// widget news
+	&__news
+
+		&-item
+
+			&:not(:last-child)
+				margin-bottom: 15px
+
+			&-last
+				text-align: center
+
+				a
+					color: $color-green-light
+					font-weight: 500
+					font-size: 16px
+					line-height: 22px
+					text-decoration: underline
+
+					&:hover
+						text-decoration: none
+
+		&-date
+			display: block
+			color: $color-green-light
+			font-size: 12px
+			line-height: 17px
+			margin-bottom: 5px
+
+		&-title
+			display: block
+
+			a
+				color: $color-white
+				font-weight: 500
+				font-size: 16px
+				line-height: 22px
+				text-decoration: none
+
+				&:hover
+					color: $color-green-light

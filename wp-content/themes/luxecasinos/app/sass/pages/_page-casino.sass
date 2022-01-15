@@ -1,0 +1,112 @@
+.casino
+	width: 100%
+	padding-left: 15px
+	padding-right: 15px
+
+	&:not(:last-child)
+		margin-bottom: 10px
+
+	&__items
+		counter-reset: cas
+		margin-bottom: 100px
+
+	&__inner
+		padding: 20px
+		min-height: 133px
+		display: flex
+		align-items: center
+		background-color: $color-widget
+		border-radius: 20px
+		+r(1259)
+			flex-wrap: wrap
+			align-items: center
+			justify-content: center
+
+	&__logo
+		display: flex
+		align-items: center
+		position: relative
+		margin-right: 30px
+		+r(1259)
+			margin-bottom: 20px
+
+	&__rating
+		text-align: center
+		margin-right: 20px
+		+r(1259)
+			margin-bottom: 20px
+
+		&-average
+			font-size: 25px
+			font-weight: 700
+			line-height: 29px
+			margin-bottom: 5px
+
+	&__bonus
+		max-width: 171px
+		text-align: center
+		margin-right: 20px
+		+r(1259)
+			margin-bottom: 20px
+
+		span
+			padding: 6px 20px
+			min-width: 80px
+			display: inline-block
+			background: rgba(#132A57, .4)
+			border-radius: 20px
+			text-align: center
+			margin-right: 6px
+
+	&__features
+		padding: 0
+		margin: 0
+		flex-grow: 1
+		display: flex
+		flex-direction: column
+		list-style-type: none
+		+r(767)
+			flex-grow: 0
+			margin-bottom: 20px
+
+		li
+			position: relative
+			font-size: 16px
+			line-height: 22px
+			padding-left: 24px
+
+			&::before
+				position: absolute
+				content: ''
+				width: 14px
+				height: 14px
+				top: 3px
+				left: 0
+				z-index: 1
+				+svg(check)
+
+			&:not(:last-child)
+				margin-bottom: 5px
+
+	&__nav
+		display: flex
+		flex-direction: column
+		align-items: center
+		justify-content: center
+		+r(1259)
+			flex-direction: row
+			flex-grow: 1
+
+		.btn
+
+			+ .btn
+				margin-top: 5px
+				+r(1259)
+					margin-top: 0
+					margin-left: 15px
+
+			&-review,
+			&-site
+				width: 123px
+				+r(374)
+					width: 110px

@@ -1,0 +1,69 @@
+.rating
+	width: 33.33333%
+	padding-left: 15px
+	padding-right: 15px
+	margin: 0 0 40px
+	+r(1259)
+		width: 50%
+	+r(767)
+		width: 100%
+
+	&-row
+		justify-content: center
+
+	&-2
+		.percent-bar-progress
+			stroke: $color-orange!important
+
+	&-3
+		.percent-bar-progress
+			stroke: $color-blue!important
+
+	&__inner
+		padding: 25px
+		background-color: rgba($color-widget, .7)
+		border-radius: $border-radius
+
+	&__title
+		color: $color-green-light
+		font-weight: 500
+		font-size: 18px
+		line-height: 25px
+		text-align: center
+		margin: 0 0 20px
+
+		span
+			color: $color-orange
+			text-transform: uppercase
+
+	&__item
+		display: flex
+		align-items: center
+		color: $color-white
+		text-decoration: none
+		+r(374)
+			flex-wrap: wrap
+
+		&:not(:last-child)
+			margin-bottom: 15px
+
+		&-thumb
+			flex-shrink: 0
+			margin-right: 20px
+			+r(374)
+				width: 100%
+
+		&-text
+			flex-grow: 1
+
+		&-title
+			color: $color-white
+			font-weight: 500
+			font-size: 18px
+			line-height: 25px
+			margin: 0 0 5px
+
+		&-year
+			color: $color-green-light
+			font-size: 12px
+			line-height: 17px

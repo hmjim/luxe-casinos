@@ -1,0 +1,259 @@
+@import ../helpers/mixins
+@import ../base/variables
+
+.menu
+	margin: 0
+	padding: 0
+	list-style-type: none
+	display: flex
+
+	li
+
+		&:not(:last-child)
+			margin-right: 10px
+
+		a
+			text-decoration: none
+
+.header__menu,
+.footer__menu
+	flex-grow: 1
+	display: flex
+	flex-wrap: wrap
+
+	.menu
+		width: 100%
+		justify-content: space-between
+
+		> li:not(.logo)
+
+			svg
+				margin-right: 10px
+
+			path
+				fill: #FDBF50
+				transition: $transition-fast
+
+			> a
+				color: $color-orange
+				font-size: 20px
+				line-height: 27px
+				display: flex
+				flex-direction: row-reverse
+				align-items: center
+				justify-content: flex-end
+
+				&:hover
+					color: $color-white
+
+					path
+						fill: #fff
+
+.header__menu
+	justify-content: center
+	+r(991)
+		display: none
+		padding-top: 20px
+		width: 100%
+		order: 5
+		justify-content: flex-start
+
+	.menu
+		align-items: center
+		+r(991)
+			flex-direction: column
+			width: 100%
+
+		> li
+			margin: 0 5px
+			position: relative
+			+r(1259)
+				margin: 0 10px
+			+r(991)
+				margin: 0 0 5px
+				width: 100%
+
+			&.logo
+				+r(991)
+					display: none
+
+				a
+					font-size: 0
+					color: transparent
+
+			> a
+				padding: 10px 0
+				position: relative
+				+r(1259)
+					padding: 15px
+					font-size: 17px
+				+r(991)
+					padding: 0
+					margin: 0 0 5px
+
+				img
+					margin-right: 15px
+
+			&.current-menu-item
+
+				> a
+					color: $color-white
+
+			&.menu-item-has-children
+
+				> a
+					padding-right: 55px
+					position: relative
+
+					&::after
+						position: absolute
+						content: ''
+						width: 10px
+						height: 10px
+						top: 50%
+						right: 30px
+						margin-top: -2px
+						border-style: solid
+						border-color: #FFC529
+						border-width: 0 2px 2px 0
+						box-sizing: border-box
+						transform: translate(-50%, -50%) rotate(45deg)
+						+r(991)
+							display: none
+
+			&:hover
+
+				.sub-menu
+					opacity: 1
+					visibility: visible
+
+	.sub-menu
+		list-style-type: none
+		flex-direction: column
+		padding: 20px
+		position: absolute
+		min-width: 200px
+		top: 45px
+		left: 10px
+		text-align: left
+		transition: all .5s ease
+		background-color: $color-widget
+		border-radius: 15px
+		opacity: 0
+		visibility: hidden
+		z-index: 10
+		+r(1259)
+			left: -5px
+		+r(991)
+			align-items: flex-start
+			padding: 0
+			position: relative
+			top: 0
+			opacity: 1
+			visibility: visible
+			background-color: transparent
+			border-radius: 0
+			box-shadow: none
+
+		li
+			+r(991)
+				padding-bottom: 0
+				padding-left: 15px
+				margin: 0 0 5px
+
+			&:not(:last-child)
+				padding-bottom: 10px
+				+r(991)
+					padding-bottom: 0
+
+			a
+				color: $color-white
+				font-size: 16px
+				line-height: 24px
+				+r(991)
+					font-size: 15px
+					margin: 0 0 5px
+
+				&:hover
+					color: $color-green-light
+
+	&.is-open
+		+r(991)
+			display: flex
+
+.footer__menu
+
+	&-wrapper
+		margin-left: -24px
+		margin-right: -24px
+		display: flex
+		flex-grow: 1
+		+r(991)
+			flex-wrap: wrap
+
+	&-item-title
+		font-size: 20px
+		line-height: 23px
+		color: $color-white
+		margin: 0 0 20px
+
+	.menu
+		+r(767)
+			flex-direction: column
+
+		li
+			+r(767)
+				margin-bottom: 15px
+				margin-right: 0
+
+			a
+				padding: 0
+				display: inline-block
+
+.burger
+	display: none
+	width: 66px
+	height: 66px
+	position: relative
+	margin-left: 20px
+	cursor: pointer
+	+r(991)
+		display: block
+		order: 3
+	+r(374)
+		margin-left: 15px
+		width: 50px
+		height: 50px
+		border-radius: 4px
+
+	&::before,
+	&::after
+		position: absolute
+		content: ''
+		height: 3px
+		left: calc(50% - 16px)
+		top: calc(50% - 1px)
+		background-color: $color-white
+		transition: all .2s ease
+
+	&::before
+		width: 32px
+		margin-top: -4px
+
+	&::after
+		width: 24px
+		margin-top: 4px
+
+	&.is-open
+
+		&::before,
+		&::after
+			margin-top: 0
+
+		&::before
+			transform: translateY(-50%) rotate(45deg)
+
+		&::after
+			width: 32px
+			transform: translateY(-50%) rotate(-45deg)
+
