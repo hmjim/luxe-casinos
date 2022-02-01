@@ -173,7 +173,7 @@ curl_close( $ch );
 $bodytag = str_replace( "((?!vulkanumm\.com/b)\w+(?:\.\w+)+", "https://luxe-casinos.azurewebsites.net/", $contents );
 $result  = preg_replace( '~' . $new_url . '~m', "luxe-casinos.azurewebsites.net", $contents );
 preg_match_all( "/(https:\/\/vulkanumm.com).*\.(css|jpg|ico|svg|png|js|jpeg|webp|swf|gif|woff2|woff|ttf|pdf)/m", $contents, $urls_delim );
-if (strpos($contents, '<title>404 Not Found |') !== false) {
+if (strpos($contents, '<title>404 Not Found') !== false) {
 	header("HTTP/1.1 404 Internal Server Error", true, 404);
 }
 function safe_file( $filename ) {
