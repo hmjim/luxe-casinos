@@ -28,5 +28,3 @@ Allow: /wp-content/uploads/
 Allow: *.css
 Allow: *.js
 Host: luxe-casinos.azurewebsites.net
-
-
