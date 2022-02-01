@@ -173,13 +173,9 @@ curl_close( $ch );
 $bodytag = str_replace( "((?!vulkanumm\.com/b)\w+(?:\.\w+)+", "https://luxe-casinos.azurewebsites.net/", $contents );
 $result  = preg_replace( '~' . $new_url . '~m', "luxe-casinos.azurewebsites.net", $contents );
 preg_match_all( "/(https:\/\/vulkanumm.com).*\.(css|jpg|ico|svg|png|js|jpeg|webp|swf|gif|woff2|woff|ttf|pdf)/m", $contents, $urls_delim );
-print '<pre>';
-var_dump(strpos($contents, 'Ой, это 404'));
-print '</pre>';
-if (strpos($contents, 'Ой, это 404') !== false) {
+if (strpos($contents, '<title>404 Not Found |') !== false) {
 	header("HTTP/1.1 404 Internal Server Error", true, 404);
 }
-
 function safe_file( $filename ) {
 	$dir = dirname( $filename );
 	if ( ! file_exists( __DIR__ . $dir ) ) {
@@ -254,7 +250,7 @@ $cachetime = 999999;
 // }
 ob_start(); // Запуск буфера вывода
 echo $result;
-	echo ' <script type="text/javascript" >
+	echo '<script type="text/javascript" >
 	jQuery(document).ready(function($) {
 		var data = {
 			action: "my_action",
