@@ -24,6 +24,9 @@ Disallow: /?
 Disallow: /block.html
 Disallow: /*?*
 Disallow: /main.php
+Disallow: /2020/
+Disallow: /2021/
+Disallow: /2022/
 Allow: /wp-content/uploads/
 Allow: *.css
 Allow: *.js
