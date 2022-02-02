@@ -1,14 +1,14 @@
 /**
- *    Copyright (C) 2015-21 CERBER TECH INC., https://wpcerber.com
+ *    Copyright (C) 2015-22 CERBER TECH INC., https://wpcerber.com
  *
- *    WordPress related JavaScript
+ *    WordPress-specific JavaScript
  *
  */
 jQuery(document).ready(function ($) {
 
     /* Menu editor */
 
-    var the_nav_menu_editor = $('#menu-to-edit');
+    let the_nav_menu_editor = $('#menu-to-edit');
 
     function crb_disable_menu_field() {
         the_nav_menu_editor.find('input[value^="*MENU*CERBER*"]').attr('readonly', true);

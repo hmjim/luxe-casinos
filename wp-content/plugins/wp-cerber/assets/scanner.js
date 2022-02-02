@@ -1,5 +1,5 @@
 /**
- *	Copyright (C) 2015-21 CERBER TECH INC., https://wpcerber.com
+ *	Copyright (C) 2015-22 CERBER TECH INC., https://wpcerber.com
  */
 jQuery(document).ready(function ($) {
 
@@ -414,7 +414,7 @@ jQuery(document).ready(function ($) {
     }
 
     function cerber_scan_parse(server_response) {
-        crb_response = $.parseJSON(server_response);
+        crb_response = JSON.parse(server_response);
         if (!crb_response) {
             cerber_scan_ended(true);
             alert('Process has been aborted due to a server error. Check your browser console for errors.');
@@ -901,7 +901,7 @@ jQuery(document).ready(function ($) {
     let crb_upload_form = $('#crb-ref-upload-dialog').find('form');
     let crb_upload_form_ul = $(crb_upload_form).find('ul');
 
-    crb_upload_form.submit(function (event) {
+    crb_upload_form.on('submit', function (event) {
 
         let formData = new FormData($(this)[0]);
         formData.append('action', 'cerber_ref_upload');
@@ -1046,24 +1046,9 @@ jQuery(document).ready(function ($) {
         $('#TB_closeWindowButton').blur();
     }
 
-    /*
-     function cerber_dialog_show(title, message, control_id) {
-     var button = '<p style="text-align: center; position: absolute; bottom: 20px; left:0; right:0; margin: auto;"><input type="button" id="' + control_id + '" value=" Yes " class="button button-primary"> <input type="button" value=" Cancel " class="button button-primary"></p>';
-
-     var popup = cerber_init_popup('crb-popup-dialog');
-     popup.html('<div style="margin-top: 1em; max-height: 280px; overflow: auto;">' + message + '</div>' + button);
-     popup.find('input[type=button]').on('click', function (event) {
-     //e.preventDefault();
-     cerber_popup_close();
-     });
-
-     tb_show(title, '#TB_inline?width=500&height=150&inlineId=crb-popup-dialog');
-     $('#TB_closeWindowButton').blur();
-     }*/
-
     function cerber_init_popup(id) {
-        var body = $("body");
-        var popup = body.find('#' + id);
+        let body = $("body");
+        let popup = body.find('#' + id);
         if (popup.length) {
             return popup;
         }

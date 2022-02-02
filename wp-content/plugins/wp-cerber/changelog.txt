@@ -1,3 +1,16 @@
+= 8.9.6 =
+* New: A new [alert creation dialog with a set of new alert settings](https://wpcerber.com/wordpress-notifications-made-easy/) enables you to create alerts with new limits: an expiration time, the maximum number of alerts allowed to send, and optional rate-limiting. The alert conditions can include the URL of a request now.
+* New: Deleting of [WordPress application passwords](https://wpcerber.com/wordpress-application-passwords-how-to/) is logged now.
+* New: Ability to monitor [anti-spam](https://wpcerber.com/antispam-for-wordpress-contact-forms/), reCAPTCHA, and several other setting-specific events using links on the settings pages.
+* Improved: Meaningful and actionable messages on the log screens if no activity has been found in the logs using a given search filter.
+* Improved: If a WP Cerber feature requires a newer version of WordPress, such a feature will not be shown in the plugin admin interface anymore.
+* Fixed: A fatal PHP error occurs while logging in on a version of WordPress older than 5.5 and a user has more than one active session.
+* Fixed: A fatal PHP error occurs while using the reset password form on a version of WordPress older than 5.4.
+* Fixed: While opening the Tools admin page, a PHP error might occur on some web servers.
+* Fixed: While rendering the Activity tab, depending on the activities logged, the PHP warning can be logged in the server error log.
+* Fixed: When [managing WP Cerber on a remote website via Cerber.Hub](https://wpcerber.com/manage-multiple-websites/), the admin page footer incorrectly displays the version of WP Cerber installed on the main website.
+* Fixed: If the Site Title of a website contains some special characters like apostrophes, the subject of [email alerts and notifications](https://wpcerber.com/wordpress-notifications-made-easy/) contains such characters in encoded form.
+
 = 8.9.5 =
 * New: A new setting for [WP Cerber's anti-spam engine](https://wpcerber.com/antispam-for-wordpress-contact-forms/): "Disable bot detection engine for IP addresses in the White IP Access List".
 * New: A new setting for [the reCAPTCHA module](https://wpcerber.com/how-to-setup-recaptcha/): "Disable reCAPTCHA for IP addresses in the White IP Access List".

@@ -1,7 +1,7 @@
 <?php
 /*
-	Copyright (C) 2015-21 CERBER TECH INC., https://cerber.tech
-	Copyright (C) 2015-21 Markov Cregory, https://wpcerber.com
+	Copyright (C) 2015-22 CERBER TECH INC., https://cerber.tech
+	Copyright (C) 2015-22 Markov Gregory, https://wpcerber.com
 
     Licenced under the GNU GPL.
 
@@ -35,14 +35,19 @@
 // If this file is called directly, abort executing.
 if ( ! defined( 'WPINC' ) ) { exit; }
 
-define('WHOIS_ERR_EXPIRE',300);
-define('WHOIS_OK_EXPIRE',24 * 3600);
-define('WHOIS_IO_TIMEOUT', 3);
+const WHOIS_ERR_EXPIRE = 300;
+const WHOIS_OK_EXPIRE = 24 * 3600;
+const WHOIS_IO_TIMEOUT = 3;
 
 require_once( dirname( __FILE__ ) . '/cerber-ripe.php' );
 
-/*
- * Get WHOIS about IP
+/**
+ * Get WHOIS info about a given IP
+ *
+ * @param string $ip
+ *
+ * @return array
+ *
  * @since 2.7
  *
  */

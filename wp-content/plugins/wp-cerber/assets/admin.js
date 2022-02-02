@@ -1,5 +1,5 @@
 /**
- *	Copyright (C) 2015-21 CERBER TECH INC., https://wpcerber.com
+ *	Copyright (C) 2015-22 CERBER TECH INC., https://wpcerber.com
  */
 jQuery(document).ready(function ($) {
 
@@ -287,7 +287,7 @@ jQuery(document).ready(function ($) {
             type: 'ajax',
             callbacks: {
                 parseAjax: function (server_response) {
-                    let the_response = $.parseJSON(server_response.data);
+                    let the_response = JSON.parse(server_response.data);
                     // Note: All html MUST BE inside of "crb-popup-wrap"
                     server_response.data = '<div id="crb-popup-wrap"><div id="crb-outer"><div id="crb-inner"><h3>' + the_response['header'] + ' ' + slave_name + '</h3>' + the_response['html'] + '</div></div><p class="crb-popup-controls"><input type="button" value="OK" class="crb-mpopup-close button button-primary"></p></div>';
                 },

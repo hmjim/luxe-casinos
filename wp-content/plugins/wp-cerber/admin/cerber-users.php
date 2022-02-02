@@ -901,7 +901,7 @@ function crb_pdata_register_eraser( $erasers ) {
 
 
 class CRB_Sessions_Table extends WP_List_Table {
-
+	private $base_admin;
 	private $geo;
 
 	public function __construct() {
@@ -913,6 +913,7 @@ class CRB_Sessions_Table extends WP_List_Table {
 		) );
 
 		$this->geo = lab_lab();
+		$this->base_admin = wp_nonce_url( cerber_admin_link( 'sessions' ), 'control', 'cerber_nonce' );
 	}
 
 	// Columns definition
@@ -1133,7 +1134,7 @@ class CRB_Sessions_Table extends WP_List_Table {
 					return '';
 				}
 
-				$href = wp_nonce_url( cerber_admin_link( 'sessions' ) . '&amp;cerber_admin_do=terminate_session&amp;id=' . $item['wp_session_token'] . '&amp;user_id=' . $item['user_id'], 'control', 'cerber_nonce' );
+				$href = $this->base_admin . '&amp;cerber_admin_do=terminate_session&amp;id=' . $item['wp_session_token'] . '&amp;user_id=' . $item['user_id'];
 
 				return crb_confirmation_link( $href, __( 'Terminate', 'wp-cerber' ) );
 

@@ -1,7 +1,7 @@
 <?php
 /*
-	Copyright (C) 2015-21 CERBER TECH INC., https://cerber.tech
-	Copyright (C) 2015-21 Markov Cregory, https://wpcerber.com
+	Copyright (C) 2015-22 CERBER TECH INC., https://cerber.tech
+	Copyright (C) 2015-22 Markov Gregory, https://wpcerber.com
 
     Licenced under the GNU GPL.
 
@@ -90,15 +90,17 @@ function cerber_wp_settings_setup( $screen_id, $sections = array() ) {
 
 	global $tmp;
 	foreach ( $sections as $section_id => $section_config ) {
-		//add_settings_section( $section, $section_config['name'], 'cerber_sapi_section', $option );
 
 		$desc = crb_array_get( $section_config, 'desc' );
 
-		if ( $link = crb_array_get( $section_config, 'doclink' ) ) {
-			if ( $desc && mb_substr( $desc, - 1 ) != '.' ) {
-				$desc .= '.';
+		if ( $links = crb_array_get( $section_config, 'seclinks' ) ) {
+			foreach ( $links as $link ) {
+				$desc .= '<span class="crb-insetting-link">[ <a target="_blank" href="' . $link[1] . '">' . $link[0] . '</a> ]</span>';
 			}
-			$desc .= '&nbsp; <a class="crb-no-wrap" target="_blank" href="' . $link . '">' . __( 'Know more', 'wp-cerber' ) . '</a>';
+		}
+
+		if ( $doclink = crb_array_get( $section_config, 'doclink' ) ) {
+			$desc .= '<span class="crb-insetting-link">[ <a class="" target="_blank" href="' . $doclink . '">' . __( 'Know more', 'wp-cerber' ) . '</a> ]</span>';
 		}
 
 		$tmp[ $section_id ] = '<span class="crb-section-desc">' . $desc . '</span>';
@@ -111,9 +113,15 @@ function cerber_wp_settings_setup( $screen_id, $sections = array() ) {
 		}, $option );
 
 		foreach ( $section_config['fields'] as $field => $config ) {
+
+			if ( isset( $config['requires_wp'] ) && ! crb_wp_version_compare( (string) $config['requires_wp'] ) ) {
+				continue;
+			}
+
 			if ( isset( $config['pro'] ) && ! lab_lab() ) {
 				continue;
 			}
+
 			$config['setting'] = $field;
 			$config['group'] = $screen_id;
 
@@ -146,7 +154,7 @@ function cerber_get_setting_id( $tab = null ) {
 	if ( ! $id ) {
 		$id = crb_admin_get_page();
 	}
-	// Exceptions: some tab names (or page id) doesn't match WP setting names
+	// Mapping: some tab names (or page id) doesn't match WP setting names
 	// tab => settings id
 	$map = array(
 		'scan_settings'    => 'scanner', // define('CERBER_OPT_S','cerber-scanner');
@@ -248,7 +256,7 @@ function cerber_field_show( $config ) {
 	$label = crb_array_get( $config, 'label', '' );
 
 	if ( ! empty( $config['doclink'] ) ) {
-		$label .= '&nbsp; <a class="crb-no-wrap" target="_blank" href="' . $config['doclink'] . '">' . __( 'Know more', 'wp-cerber' ) . '</a>';
+		$label .= '<span class="crb-insetting-link">[ <a class="crb-no-wrap" target="_blank" href="' . $config['doclink'] . '">' . __( 'Know more', 'wp-cerber' ) . '</a> ]</span>';
 	}
 
 	$placeholder = esc_attr( crb_array_get( $config, 'placeholder', '' ) );
@@ -351,7 +359,7 @@ function cerber_field_show( $config ) {
 			$html = '<label class="crb-switch"><input class="screen-reader-text" type="checkbox" id="' . $config['setting'] . '" name="cerber-' . $config['group'] . '[' . $config['setting'] . ']" value="1" ' . checked( 1, $value, false ) . $atts . ' /><span class="crb-slider round"></span></label>'
 			        . __( 'Notify admin if the number of active lockouts above', 'wp-cerber' ) . ' ' .
 			        cerber_digi_field( $name_prefix . '[above]', $settings['above'] ) .
-			        ' <span class="crb-no-wrap">[  <a href="' . cerber_admin_link_add( array(
+			        '<span class="crb-insetting-link">[ <a href="' . cerber_admin_link_add( array(
 					'cerber_admin_do' => 'testnotify',
 					'type'            => 'lockout',
 				) ) . '">' . __( 'Click to send test', 'wp-cerber' ) . '</a> ]</span>';
@@ -477,8 +485,18 @@ function cerber_field_show( $config ) {
 					$label = ' <label for="' . $config['setting'] . '">' . $label . '</label>';
 				}
 			}
+
 			$html .= $label;
-			break;
+
+		break;
+	}
+
+	if ( $loh = $config['act_relation'] ?? false ) {
+		foreach ( $loh as $item ) {
+			if ( in_array( $value, $item[0] ) ) {
+				$html .= '<span class="crb-insetting-link">[ <a href="' . cerber_admin_link( 'activity', $item[1] ) . '" target="_blank">' . $item[2] . '</a> ]</span>';
+			}
+		}
 	}
 
 	if ( ! empty( $config['field_switcher'] ) ) {
@@ -566,7 +584,7 @@ function cerber_time_select($args, $settings){
 	}
 	$ret .= cerber_select( 'cerber-' . $args['group'] . '[' . $field . ']', $hours, $selected );
 
-	return $ret . ' &nbsp; <span class="crb-no-wrap">[ <a href="' . cerber_admin_link_add( array(
+	return $ret . '<span class="crb-insetting-link">[ <a href="' . cerber_admin_link_add( array(
 			'cerber_admin_do' => 'testnotify',
 			'type'            => 'report',
 		) ) . '">' . __( 'Click to send now', 'wp-cerber' ) . '</a> ]</span>';
@@ -773,8 +791,7 @@ add_filter( 'pre_update_option_'.CERBER_OPT_C, function ($new, $old, $option) {
 	if ( ! empty( $new['sitekey'] ) && ! empty( $new['secretkey'] ) ) {
 		if ( ( ! $goo = get_wp_cerber()->reCaptchaRequest( '1' ) )
 		     || ! isset( $goo['success'] ) ) {
-			$labels = cerber_get_labels( 'status' );
-			cerber_admin_notice( __( 'ERROR:', 'wp-cerber' ) . ' ' . $labels[534] );
+			cerber_admin_notice( __( 'ERROR:', 'wp-cerber' ) . ' ' . cerber_get_labels( 'status', 534 ) );
 		}
 	}
 
@@ -816,11 +833,24 @@ add_filter( 'pre_update_option_'.CERBER_OPT_N, function ($new, $old, $option) {
 
 	$new['emailrate'] = absint( $new['emailrate'] );
 
-	// set 'default' value for the device setting if a new token has been entered
+	// When we install a new token, we set proper default value for the device setting
+
 	if ( $new['pbtoken'] != $old['pbtoken'] ) {
-		$list = cerber_pb_get_devices($new['pbtoken']);
-		if (is_array($list) && !empty($list)) $new['pbdevice'] = 'all';
-		else $new['pbdevice'] = '';
+
+		if ( ! $new['pbtoken'] ) {
+			$new['pbdevice'] = '';
+		}
+		else {
+
+			$list = cerber_pb_get_devices( $new['pbtoken'] );
+
+			if ( is_array( $list ) && ! empty( $list ) ) {
+				$new['pbdevice'] = 'all';
+			}
+			else {
+				$new['pbdevice'] = '';
+			}
+		}
 	}
 
 	return $new;

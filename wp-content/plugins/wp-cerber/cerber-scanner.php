@@ -1,7 +1,7 @@
 <?php
 /*
-	Copyright (C) 2015-21 CERBER TECH INC., https://cerber.tech
-	Copyright (C) 2015-21 Markov Cregory, https://wpcerber.com
+	Copyright (C) 2015-22 CERBER TECH INC., https://cerber.tech
+	Copyright (C) 2015-22 Markov Gregory, https://wpcerber.com
 
     Licenced under the GNU GPL.
 
@@ -3396,14 +3396,14 @@ function cerber_cmp_files( $prev, $new ) {
 }
 
 /**
- * Recursively creates a list of files in a given folder with a given filename pattern
+ * Recursively creates a list of files in a given folder matching a given filename pattern
  *
- * @param string $root The starting folder with trailing slash
- * @param callable $function The function to save the list of files that are passed as an array
+ * @param string $root The starting folder
+ * @param callable $function The function to save the list of files that is passed as an array
  *
  * @param string $pattern Pattern for filenames to include
  *
- * @return array The total number of folders and files
+ * @return array The total number of processed folders and files
  */
 function cerber_scan_directory( $root, $function, $pattern = null ) {
     static $history = array();

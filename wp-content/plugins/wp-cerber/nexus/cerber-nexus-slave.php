@@ -1,7 +1,7 @@
 <?php
 /*
-	Copyright (C) 2015-21 CERBER TECH INC., https://cerber.tech
-	Copyright (C) 2015-21 Markov Cregory, https://wpcerber.com
+	Copyright (C) 2015-22 CERBER TECH INC., https://cerber.tech
+	Copyright (C) 2015-22 Markov Gregory, https://wpcerber.com
 
     Licenced under the GNU GPL.
 
@@ -197,7 +197,7 @@ function nexus_slave_process() {
 
 	cerber_load_admin_code();
 
-	$response = nexus_prepare_responce();
+	$response = nexus_prepare_response();
 
 	if ( is_wp_error( $response ) ) {
 		$m = __( 'ERROR:', 'wp-cerber' ) . ' ' . $response->get_error_message();
@@ -271,7 +271,7 @@ function nexus_parse_request() {
 	return $request;
 }
 
-function nexus_prepare_responce() {
+function nexus_prepare_response() {
 
 	$master = nexus_request_data();
 

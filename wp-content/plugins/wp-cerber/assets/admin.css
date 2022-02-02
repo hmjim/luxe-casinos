@@ -208,6 +208,16 @@
     display: none;
 }
 
+.crb-insetting-link {
+    margin-left: 1em;
+    white-space: nowrap;
+}
+
+.crb-insetting-link a {
+    text-decoration: none;
+}
+
+
 /* Select2 */
 
 #crb-admin [class^='select2'] {
@@ -1129,6 +1139,12 @@ td.crb-traffic-details table td:nth-child(2) {
     padding-bottom: 2px;
 }
 
+.crb-rectangle {
+    text-align: center;
+    padding: 2em;
+    background-color: #fff;
+}
+
 /* Pagination links */
 
 .pagination {
@@ -1718,6 +1734,12 @@ body.wp-cerber_page_cerber-integrity {
 
 /* New popups */
 
+div.mfp-bg.crb-admin-mpopup {
+    z-index: 9999;
+}
+div.mfp-wrap.crb-admin-mpopup {
+    z-index: 9999;
+}
 .crb-admin-mpopup .mfp-content {
     background-color: #fff;
     max-width: 800px;
@@ -1738,6 +1760,38 @@ body.wp-cerber_page_cerber-integrity {
     max-height: 600px;
     overflow-y: auto;
     padding-right: 20px;
+}
+
+/* New pop-up dialogs */
+
+div.mfp-bg.crb-popup-dialog-wrap {
+    z-index: 9999;
+}
+div.mfp-wrap.crb-popup-dialog-wrap {
+    z-index: 9999;
+}
+
+.crb-popup-dialog-wrap .mfp-content {
+    background-color: #fff;
+    max-width: 600px;
+    margin-top: 50px;
+}
+
+.crb-popup-dialog {
+    padding: 2em;
+}
+
+.crb-popup-dialog-form input[type="text"],
+.crb-popup-dialog-form input[type="date"] {
+    min-width: 14em;
+}
+
+.crb-popup-dialog-aside {
+    padding-left: 1em;
+}
+
+.crb-popup-dialog .crb-table-2cols td {
+    width: 50%;
 }
 
 /* Widgets */

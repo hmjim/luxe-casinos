@@ -1,7 +1,7 @@
 <?php
 /*
-	Copyright (C) 2015-21 CERBER TECH INC., https://cerber.tech
-	Copyright (C) 2015-21 Markov Cregory, https://wpcerber.com
+	Copyright (C) 2015-22 CERBER TECH INC., https://cerber.tech
+	Copyright (C) 2015-22 Markov Gregory, https://wpcerber.com
 
     Licenced under the GNU GPL.
 
@@ -47,9 +47,9 @@ if ( ! defined( 'WPINC' ) ) { exit; }
  *
  */
 
-define('RIPE_ERR_EXPIRE',300);
-define('RIPE_OK_EXPIRE',24 * 3600);
-define('RIPE_HOST','http://rest.db.ripe.net/');
+const RIPE_ERR_EXPIRE = 300;
+const RIPE_OK_EXPIRE = 24 * 3600;
+const RIPE_HOST = 'http://rest.db.ripe.net/';
 
 /**
  * Search for the information about IP by using RIPE REST API, method 'search'

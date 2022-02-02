@@ -1,7 +1,7 @@
 <?php
 /*
-	Copyright (C) 2015-21 CERBER TECH INC., https://cerber.tech
-	Copyright (C) 2015-21 Markov Cregory, https://wpcerber.com
+	Copyright (C) 2015-22 CERBER TECH INC., https://cerber.tech
+	Copyright (C) 2015-22 Markov Gregory, https://wpcerber.com
 
     Licenced under the GNU GPL.
 
@@ -339,6 +339,9 @@ function nexus_is_valid_request() {
 	return $ret;
 }
 
+/**
+ * @return false|object
+ */
 function nexus_get_context() {
 	static $slave, $slave_id;
 
@@ -347,14 +350,12 @@ function nexus_get_context() {
 		return false;
 	}
 
-	if ( ! function_exists( 'wp_get_current_user' ) // No information about a user is available
-	     || ! cerber_user_can_manage() ) {
+	if ( ! $id = absint( cerber_get_cookie( 'cerber_nexus_id', 0 ) ) ) {
 		return false;
 	}
 
-	$id = null;
-
-	if ( ! $id = absint( cerber_get_cookie( 'cerber_nexus_id', 0 ) ) ) {
+	if ( ! function_exists( 'wp_get_current_user' ) // No information about a user is available
+	     || ! cerber_user_can_manage() ) {
 		return false;
 	}
 
@@ -363,12 +364,23 @@ function nexus_get_context() {
 	}
 
 	$slave_id = $id;
+
 	if ( ! $slave = nexus_get_slave_data( $slave_id ) ) {
 		$slave_id = null;
 		$slave = false;
 	}
 
 	return $slave;
+}
+
+/**
+ * Wrapper
+ *
+ * @return array
+ * @since 8.9.5.7
+ */
+function nexus_get_remote_data() {
+	return CRB_Nexus::get_remote_data();
 }
 
 function nexus_get_role_data( $flush = false ) {

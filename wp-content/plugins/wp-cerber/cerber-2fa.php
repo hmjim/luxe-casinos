@@ -1,7 +1,7 @@
 <?php
 /*
-	Copyright (C) 2015-21 CERBER TECH INC., https://cerber.tech
-	Copyright (C) 2015-21 Markov Cregory, https://wpcerber.com
+	Copyright (C) 2015-22 CERBER TECH INC., https://cerber.tech
+	Copyright (C) 2015-22 Markov Gregory, https://wpcerber.com
 
     Licenced under the GNU GPL.
 
@@ -498,7 +498,7 @@ final class CRB_2FA {
 		}
 
 		$to = self::get_user_email( $user_id );
-		$subj = '[' . get_option( 'blogname' ) . '] ' . __( 'Please verify that it’s you', 'wp-cerber' );
+		$subj = '[' . crb_get_blogname_decoded() . '] ' . __( 'Please verify that it’s you', 'wp-cerber' );
 		$body = array();
 
 		//$body[] = 'We need to verify that it’s you because you are trying to sign-in from a different device or a different location or you have not signed in for a long time. If this wasn’t you, please reset your password immediately.';
@@ -691,7 +691,7 @@ final class CRB_2FA {
                             cerber_verify_pin: $(this).find('input[type="text"]').val()
                         },
                         function (server_response, textStatus, jqXHR) {
-                            let server_data = $.parseJSON(server_response);
+                            let server_data = JSON.parse(server_response);
                             if (server_data.error.length === 0) {
                                 cform.find('[name="cerber_tag"]').val(nonce2fa);
                                 cform.data('verified', 'yes');

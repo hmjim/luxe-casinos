@@ -16,7 +16,8 @@
 					<?php } ?>
 
 					<?php
-					$home_link     = get_field( 'home_link' );
+					//$home_link     = get_field( 'home_link' );
+					$home_link     = get_field('ssylka_na_zal', 'category_1');
 					$slot_btn_text = get_field( 'slot_btn_text', 'options' );
 					?>
 					<div class="main-slot__wrapper">

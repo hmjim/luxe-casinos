@@ -1,7 +1,7 @@
 <?php
 /*
-	Copyright (C) 2015-21 CERBER TECH INC., https://cerber.tech
-	Copyright (C) 2015-21 Markov Cregory, https://wpcerber.com
+	Copyright (C) 2015-22 CERBER TECH INC., https://cerber.tech
+	Copyright (C) 2015-22 Markov Gregory, https://wpcerber.com
 
     Licenced under the GNU GPL.
 
@@ -45,7 +45,7 @@ add_action( 'admin_init', function () {
 	cerber_admin_init();
 	cerber_export();
 	cerber_import();
-	cerber_unsubscribeme();
+	cerber_delete_alert();
 
 	// @since 8.8.2.3 Workaround: if scheduled (cron) tasks are not executed on the website
 	$last = get_site_transient( 'cerber_daily_1' );
@@ -401,7 +401,7 @@ add_action( 'wp_ajax_cerber_view_file', function () {
         <script type="text/javascript" src="<?php echo $sh_url; ?>scripts/shBrushPhp.js"></script>
         <link href="<?php echo $sh_url; ?>styles/shCore.css" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $sh_url; ?>styles/shThemeDefault.css" rel="stylesheet" type="text/css"/>
-        <style type="text/css" media="all">
+        <style>
             body {
                 overflow: hidden;
                 font-family: 'Roboto', sans-serif;
@@ -1514,3 +1514,14 @@ add_action( 'manage_application-passwords-user_custom_column', function ( $colum
 	}
 
 }, 10, 2 );
+
+/**
+ * @param string $fname
+ * @param string $ct Content-Type @since 8.6.9
+ */
+function crb_file_headers( $fname, $ct = 'text/csv' ) {
+	$fname = rawurlencode( $fname ); // encode non-ASCII symbols
+	@ob_clean(); // This trick is crucial for some servers/environments (e.g. some IIS)
+	header( "Content-Type: " . $ct );
+	header( "Content-Disposition: attachment; filename*=UTF-8''{$fname}" );
+}

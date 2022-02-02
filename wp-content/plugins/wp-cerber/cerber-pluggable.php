@@ -1,7 +1,7 @@
 <?php
 /*
-	Copyright (C) 2015-21 CERBER TECH INC., https://cerber.tech
-	Copyright (C) 2015-21 Markov Cregory, https://wpcerber.com
+	Copyright (C) 2015-22 CERBER TECH INC., https://cerber.tech
+	Copyright (C) 2015-22 Markov Gregory, https://wpcerber.com
 
     Licenced under the GNU GPL.
 
@@ -87,4 +87,104 @@ if ( ! function_exists( 'wp_logout' ) ) :
 		 */
 		do_action( 'wp_logout', $user_id );
 	}
+endif;
+
+
+// Compatibility with old versions of WordPress
+
+if ( ! function_exists( 'get_metadata_raw' ) ) :
+
+	/**
+	 * Retrieves raw metadata value for the specified object.
+	 *
+	 * @param string $meta_type Type of object metadata is for. Accepts 'post', 'comment', 'term', 'user',
+	 *                          or any other object type with an associated meta table.
+	 * @param int $object_id ID of the object metadata is for.
+	 * @param string $meta_key Optional. Metadata key. If not specified, retrieve all metadata for
+	 *                          the specified object. Default empty.
+	 * @param bool $single Optional. If true, return only the first value of the specified `$meta_key`.
+	 *                          This parameter has no effect if `$meta_key` is not specified. Default false.
+	 *
+	 * @return mixed An array of values if `$single` is false.
+	 *               The value of the meta field if `$single` is true.
+	 *               False for an invalid `$object_id` (non-numeric, zero, or negative value),
+	 *               or if `$meta_type` is not specified.
+	 *               Null if the value does not exist.
+	 * @since 5.5.0
+	 *
+	 */
+	function get_metadata_raw( $meta_type, $object_id, $meta_key = '', $single = false ) {
+		if ( ! $meta_type || ! is_numeric( $object_id ) ) {
+			return false;
+		}
+
+		$object_id = absint( $object_id );
+		if ( ! $object_id ) {
+			return false;
+		}
+
+		/**
+		 * Short-circuits the return value of a meta field.
+		 *
+		 * The dynamic portion of the hook, `$meta_type`, refers to the meta object type
+		 * (post, comment, term, user, or any other type with an associated meta table).
+		 * Returning a non-null value will effectively short-circuit the function.
+		 *
+		 * Possible filter names include:
+		 *
+		 *  - `get_post_metadata`
+		 *  - `get_comment_metadata`
+		 *  - `get_term_metadata`
+		 *  - `get_user_metadata`
+		 *
+		 * @param mixed $value The value to return, either a single metadata value or an array
+		 *                          of values depending on the value of `$single`. Default null.
+		 * @param int $object_id ID of the object metadata is for.
+		 * @param string $meta_key Metadata key.
+		 * @param bool $single Whether to return only the first value of the specified `$meta_key`.
+		 * @param string $meta_type Type of object metadata is for. Accepts 'post', 'comment', 'term', 'user',
+		 *                          or any other object type with an associated meta table.
+		 *
+		 * @since 5.5.0 Added the `$meta_type` parameter.
+		 *
+		 * @since 3.1.0
+		 */
+		$check = apply_filters( "get_{$meta_type}_metadata", null, $object_id, $meta_key, $single, $meta_type );
+		if ( null !== $check ) {
+			if ( $single && is_array( $check ) ) {
+				return $check[0];
+			}
+			else {
+				return $check;
+			}
+		}
+
+		$meta_cache = wp_cache_get( $object_id, $meta_type . '_meta' );
+
+		if ( ! $meta_cache ) {
+			$meta_cache = update_meta_cache( $meta_type, array( $object_id ) );
+			if ( isset( $meta_cache[ $object_id ] ) ) {
+				$meta_cache = $meta_cache[ $object_id ];
+			}
+			else {
+				$meta_cache = null;
+			}
+		}
+
+		if ( ! $meta_key ) {
+			return $meta_cache;
+		}
+
+		if ( isset( $meta_cache[ $meta_key ] ) ) {
+			if ( $single ) {
+				return maybe_unserialize( $meta_cache[ $meta_key ][0] );
+			}
+			else {
+				return array_map( 'maybe_unserialize', $meta_cache[ $meta_key ] );
+			}
+		}
+
+		return null;
+	}
+
 endif;

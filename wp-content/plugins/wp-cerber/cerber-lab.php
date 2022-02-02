@@ -2,8 +2,8 @@
 /*
 	Cerber Laboratory (cerberlab.net) specific routines.
 
-	Copyright (C) 2015-21 CERBER TECH INC., https://cerber.tech
-	Copyright (C) 2015-21 Markov Cregory, https://wpcerber.com
+	Copyright (C) 2015-22 CERBER TECH INC., https://cerber.tech
+	Copyright (C) 2015-22 Markov Gregory, https://wpcerber.com
 
     Licenced under the GNU GPL.
 
@@ -508,7 +508,7 @@ function lab_get_nodes() {
 /**
  * Small diagnostic report about nodes for admin
  *
- * @return string Report to show in Dashboard
+ * @return string Report to show in the Dashboard
  */
 function lab_status() {
 

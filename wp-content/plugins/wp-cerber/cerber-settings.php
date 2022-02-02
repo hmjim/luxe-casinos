@@ -1,7 +1,7 @@
 <?php
 /*
-	Copyright (C) 2015-21 CERBER TECH INC., https://cerber.tech
-	Copyright (C) 2015-21 Markov Cregory, https://wpcerber.com
+	Copyright (C) 2015-22 CERBER TECH INC., https://cerber.tech
+	Copyright (C) 2015-22 Markov Gregory, https://wpcerber.com
 
     Licenced under the GNU GPL.
 
@@ -184,6 +184,10 @@ function cerber_settings_config( $args = array() ) {
 						__( 'Block access to wp-login.php', 'wp-cerber' ),
 						__( 'Deny authentication through wp-login.php', 'wp-cerber' )
 					),
+					'act_relation' => array(
+						array( array( 2 ), array( 'filter_activity' => CRB_EV_LDN, 'filter_status' => 50 ), __( 'View violations in the log', 'wp-cerber' ) ),
+						array( array( 1 ), array( 'filter_activity' => CRB_EV_PUR, 'filter_status' => array( 0, 10 ), 'search_url' => '/wp-login.php' ), __( 'View violations in the log', 'wp-cerber' ) )
+					),
 				),
 				'nologinhint' => array(
 					'title' => __( 'Disable the default login error message', 'wp-cerber' ),
@@ -196,14 +200,15 @@ function cerber_settings_config( $args = array() ) {
 					'type'    => 'textarea',
 					'enabler' => array( 'nologinhint' ),
 				),*/
-				'nopasshint'  => array(
-					'title' => __( 'Disable the default reset password error message', 'wp-cerber' ),
-					'label' => __( 'Do not reveal non-existing usernames and emails in the reset password error message', 'wp-cerber' ),
-					'type'  => 'checkbox',
+				'nopasshint' => array(
+					'title'       => __( 'Disable the default reset password error message', 'wp-cerber' ),
+					'label'       => __( 'Do not reveal non-existing usernames and emails in the reset password error message', 'wp-cerber' ),
+					'type'        => 'checkbox',
+					'requires_wp' => '5.5'
 				),
 				/*'nopasshint_msg' => array(
 					'title'   => 'Reset password error message',
-					'label'   => __( 'An optional error message to be displayed when attempting to reset password for a non-existing username or a non-existing email', 'wp-cerber' ),
+					'label'   => __( 'An optional error message to be displayed when attempting to reset password for a non-existing username or non-existing email address', 'wp-cerber' ),
 					'type'    => 'textarea',
 					'enabler' => array( 'nopasshint' ),
 				),*/
@@ -305,7 +310,7 @@ function cerber_settings_config( $args = array() ) {
 					'title'   => __( 'Notifications', 'wp-cerber' ),
 					'type'    => 'checkbox',
 					'label'   => __( 'Send notification to admin email', 'wp-cerber' ) .
-					             ' <span class="crb-no-wrap">[ <a href="' . cerber_admin_link_add( array(
+					             '<span class="crb-insetting-link">[ <a href="' . cerber_admin_link_add( array(
 							'cerber_admin_do' => 'testnotify',
 							'type'            => 'citadel',
 						) ) . '">' . __( 'Click to send test', 'wp-cerber' ) . '</a> ]</span>',
@@ -686,7 +691,7 @@ function cerber_settings_config( $args = array() ) {
 					'type'    => 'digits',
 				),
 				'usersort'    => array(
-					'title'   => __( 'Sort users in dashboard', 'wp-cerber' ),
+					'title'   => __( 'Sort users in the Dashboard', 'wp-cerber' ),
 					'label'   => __( 'by date of registration', 'wp-cerber' ),
 					'default' => '',
 					'type'    => 'checkbox',
@@ -1220,9 +1225,15 @@ function cerber_settings_config( $args = array() ) {
 
 		'antibot'      => array(
 			'name'    => __( 'Cerber anti-spam engine', 'wp-cerber' ),
-			'desc'    => __( 'Spam protection for comment, registration and contact forms on a website', 'wp-cerber' ),
+			'desc'    => __( 'Spam protection for registration, comment, and other forms on the website', 'wp-cerber' ),
 			'doclink' => 'https://wpcerber.com/antispam-for-wordpress-contact-forms/',
-			'fields'  => array(
+			'seclinks' => array(
+				array(
+					__( 'View bot events', 'wp-cerber' ),
+					cerber_admin_link( 'activity', array( 'filter_status' => CRB_STS_11 ) )
+				)
+			),
+			'fields' => array(
 				'botsreg'    => array(
 					'title' => __( 'Registration form', 'wp-cerber' ),
 					'label' => __( 'Protect registration form with bot detection engine', 'wp-cerber' ),
@@ -1322,6 +1333,12 @@ function cerber_settings_config( $args = array() ) {
 			'name'    => __( 'reCAPTCHA settings', 'wp-cerber' ),
 			'desc'    => __( 'Before you can start using reCAPTCHA, you have to obtain Site key and Secret key on the Google website', 'wp-cerber' ),
 			'doclink' => 'https://wpcerber.com/how-to-setup-recaptcha/',
+			'seclinks' => array(
+				array(
+					__( 'View reCAPTCHA events', 'wp-cerber' ),
+					cerber_admin_link( 'activity', array( 'filter_status' => array( 531, CRB_STS_532, 533, 534 ) ) )
+				)
+			),
 			'fields'  => array(
 				'sitekey'       => array(
 					'title' => __( 'Site key', 'wp-cerber' ),

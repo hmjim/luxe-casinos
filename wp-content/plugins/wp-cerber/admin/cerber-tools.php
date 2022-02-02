@@ -1,7 +1,7 @@
 <?php
 /*
-	Copyright (C) 2015-21 CERBER TECH INC., https://cerber.tech
-	Copyright (C) 2015-21 Markov Cregory, https://wpcerber.com
+	Copyright (C) 2015-22 CERBER TECH INC., https://cerber.tech
+	Copyright (C) 2015-22 Markov Gregory, https://wpcerber.com
 
     Licenced under the GNU GPL
 
@@ -287,9 +287,14 @@ function cerber_show_diag(){
 	    }
 	    ksort( $server );
 	    $se = array();
-	    foreach ( $server as $key => $value ) {
-		    $se[] = array( $key, @strip_tags( $value ) );
-	    }
+        foreach ( $server as $key => $value ) {
+	        if ( is_array( $value ) ) {
+		        $se[] = array( $key, cerber_table_view( $key, $value ) );
+	        }
+	        else {
+		        $se[] = array( $key, @strip_tags( $value ) );
+	        }
+        }
 
 	    crb_show_diag_section( 'Server Environment Variables', cerber_make_plain_table( $se ) );
 
@@ -313,13 +318,45 @@ function cerber_show_diag(){
 		    crb_show_diag_section( 'Weekly Reports', $rep );
 	    }
 
-	    if ( $subs = get_site_option( '_cerber_subs' ) ) {
+	    if ( $alerts = get_site_option( CRB_ALERTZ ) ) {
 
 		    $rep = '<ol>';
-		    foreach ( $subs as $hash => $sub ) {
-			    $rep .= '<li>' . $hash . ' | <a href = "' . cerber_admin_link( 'activity' ) . '&amp;unsubscribeme=' . $hash . '">' . __( 'Unsubscribe', 'wp-cerber' ) . '</a></li>';
+
+		    foreach ( $alerts as $hash => $alert ) {
+
+			    $al_info = array();
+
+			    if ( ! empty( $alert[13] ) ) {
+				    if ( $alert[13] < time() ) {
+					    $al_info [] = 'Expired';
+				    }
+				    else {
+					    $al_info [] = 'Expires on ' . cerber_date( $alert[13] );
+				    }
+			    }
+
+			    if ( ! empty( $alert[11] ) ) {
+				    if ( $alert[11] <= $alert[12] ) {
+					    $al_info [] = 'Inactive (limit has reached)';
+				    }
+				    else {
+					    $al_info [] = 'Remains ' . ( $alert[11] - $alert[12] );
+				    }
+			    }
+
+			    if ( ! empty( $alert[14] ) ) {
+				    $al_info [] = 'Ignore rate limiting';
+			    }
+
+			    if ( $al_info = implode( ' | ', $al_info ) ) {
+				    $al_info = ' | ' . $al_info;
+			    }
+
+			    $rep .= '<li>ID: ' . $hash . ' ' . $al_info . ' | <a href = "' . cerber_admin_link( crb_admin_get_tab() ) . '&amp;unsubscribeme=' . $hash . '">' . __( 'Delete', 'wp-cerber' ) . '</a></li>';
 		    }
+
 		    $rep .= '</ol>';
+
 		    $rep .= '<p><a target="_blank" href="https://wpcerber.com/wordpress-notifications-made-easy/">Read more on alerts and notifications</a></p>';
 
 		    crb_show_diag_section( 'Alerts', $rep );

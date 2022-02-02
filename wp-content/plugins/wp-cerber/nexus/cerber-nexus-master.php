@@ -1,7 +1,7 @@
 <?php
 /*
-	Copyright (C) 2015-21 CERBER TECH INC., https://cerber.tech
-	Copyright (C) 2015-21 Markov Cregory, https://wpcerber.com
+	Copyright (C) 2015-22 CERBER TECH INC., https://cerber.tech
+	Copyright (C) 2015-22 Markov Gregory, https://wpcerber.com
 
     Licenced under the GNU GPL.
 
@@ -40,6 +40,381 @@ require_once( dirname( __FILE__ ) . '/cerber-slave-list.php' );
 
 const CRB_ADD_SLAVE_LNK = '#TB_inline?width=450&height=350&inlineId=crb-popup-add-slave';
 const CRB_NX_SLAVE = 'slave-edit-form'; // Special form for editing slave data
+
+/**
+ * @since 8.9.5.7
+ */
+final class CRB_Nexus {
+	private static $net_data = array();
+
+	/**
+	 * Sends request to remote website
+	 *
+	 * @param $request array
+	 * @param $slave_id int
+	 *
+	 * @return bool|mixed
+	 */
+	static function send( $request, $slave_id = null ) {
+		global $nexus_last_http, $nexus_last_curl, $nexus_slave_name, $nexus_slave_id;
+
+		nexus_diag_log( '/\/ Initiating ' . $request['type'] . ' request to the slave' . ( ( $slave_id ) ? ' #' . $slave_id : ' from context' ) );
+
+		$slave = ( $slave_id ) ? nexus_get_slave_data( $slave_id ) : nexus_get_context();
+
+		if ( ! $slave ) {
+			return false;
+		}
+
+		$network = CRB_Nexus::net_send_request( $request, $slave );
+
+		nexus_update_slave( $slave->id, array( 'last_http' => $nexus_last_http ) );
+		$nexus_slave_id = $slave->id;
+		$nexus_slave_name = $slave->site_name;
+
+		if ( ! is_wp_error( $network ) ) {
+
+			nexus_process_extra( $network, $slave );
+
+			if ( ! empty( $network['payload']['error'] ) ) { // A critical error on the slave
+				$m = 'An error occurred on ' . $slave->site_name . ': ' . htmlspecialchars( $network['payload']['error'][1], ENT_SUBSTITUTE );
+				cerber_admin_notice( $m );
+				nexus_diag_log( $m );
+
+				return '';
+			}
+
+			$response = $network['payload'];
+
+			if ( cerber_is_wp_ajax() ) {
+				return $response;
+			}
+
+			if ( isset( $response['redirect'] ) ) {
+				if ( $redirect_to = crb_array_get( $response, 'redirect_url' ) ) {
+					nexus_diag_log( '> > > Redirecting to ' . $redirect_to );
+					// TODO should we use wp_safe_redirect()???
+					header( 'Location: ' . $redirect_to, true, 302 );
+					exit;
+				}
+				else {
+					cerber_safe_redirect( crb_array_get( $response, 'remove_args' ) );
+				}
+			}
+
+			return $response;
+		}
+		else {
+
+			$codes = array(
+				301 => 'Unexpected HTTP redirection on the slave. Check if WP Cerber is installed and active on the slave website.',
+				302 => 'Unexpected HTTP redirection on the slave. Check if WP Cerber is installed and active on the slave website.',
+				403 => 'Access to the slave website is denied.',
+				500 => 'Remote website (web server) is unable to proceed due to a fatal software (PHP) error. Check the server error log on the slave website.'
+			);
+
+			$causes = array(
+				'The remote website is configured to be managed from an IP address that does not match the IP address of this master website.',
+				'A security plugin on the remote website is interfering with the WP Cerber plugin',
+				'A directive in the .htaccess file on the remote website is blocking incoming requests',
+				'A firewall or a proxy service (like Cloudflare) is blocking (filtering out) incoming requests to the remote website',
+				'The IP address of this master is locked out or in the Black Access List on the remote website',
+
+				'The slave mode on the remote website has been re-enabled making the security token saved on this master invalid',
+				'The slave mode has been disabled on the remote website',
+				'The IP address of this master website does not match the one set in the slave settings on the remote website',
+				'The WP Cerber plugin has been deactivated on the slave website',
+
+				'The remote server is redirecting incoming requests to another website',
+				'The domain name of the slave website has been changed',
+
+				'The remote server is down or not responding',
+				'The SSL certificate of the slave website is expired or invalid',
+				'There is no network connectivity between this master server and the server on which the slave website is running',
+			);
+
+			$kb = array(
+				// 200
+				'nexus_json_decode_error' => array( 5, 6, 2, 7, 1 ),
+				'checksum_error'          => array( 5 ),
+
+				// Not 200
+				0                         => array( 9, 10, 11, 12, 13 ),
+				301                       => array( 9, 10, 12 ),
+				302                       => array( 9, 10, 12 ),
+				403                       => array( 0, 1, 2, 3, 4 ),
+			);
+
+			if ( $network->get_error_code() == 'nexus_http_error' ) {
+				if ( ! $error = crb_array_get( $codes, $nexus_last_http ) ) {
+					$desc = $nexus_last_http . ' ' . get_status_header_desc( $nexus_last_http );
+					$error = '<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/' . $nexus_last_http . '" target="_blank">' . $desc . '</a>';
+				}
+				else {
+					$error = $nexus_last_http . ' ' . $error;
+				}
+				$error = 'HTTP ERROR ' . $error;
+			}
+			else {
+				$error = $network->get_error_message();
+			}
+
+			nexus_diag_log( 'NETWORK ERROR: ' . $error );
+
+			$parse = parse_url( $slave->site_url );
+			$domain = $parse['host'];
+			$ip = gethostbyname( $domain );
+			if ( ! cerber_is_ip( $ip ) ) {
+				$ip = 'Unknown. Unable to resolve the IP address. Possibly the domain ' . $domain . ' is not delegated.';
+				$hostname = 'Unknown';
+			}
+			else {
+				$hostname = gethostbyaddr( $ip );
+			}
+
+			?>
+            <div style="padding: 4em;">
+
+                <h3><?php _e( 'Invalid response from the slave website', 'wp-cerber' ); ?></h3>
+                <p style="color: red; font-weight: bold;"><?php echo $error; ?></p>
+                Remote website: <?php echo $slave->site_name; ?><br/>
+                Remote website URL: <?php echo $slave->site_url; ?><br/>
+                <p style="font-weight: bold;">This may be caused by a number of reasons</p>
+                <ul style="list-style: disc;">
+					<?php
+
+					if ( ! $kb_filter = crb_array_get( $kb, $network->get_error_code() ) ) {
+						if ( ! $kb_filter = crb_array_get( $kb, $nexus_last_http ) ) {
+							$kb_filter = null;
+						}
+					}
+
+					$show = array();
+					if ( $kb_filter ) {
+						foreach ( $kb_filter as $key ) {
+							$show[] = $causes[ $key ];
+						}
+						//$show = array_intersect_key( $causes, array_flip( $kb_filter ) );
+					}
+
+					if ( ! $show ) {
+						$show = $causes;
+					}
+
+					echo '<li>' . implode( '</li><li>', $show ) . '</li>';
+
+					?>
+                </ul>
+
+				<?php
+				$slave = nexus_get_context();
+				if ( $slave ) {
+					echo '<p><a href="' . nexus_get_back_link() . '">Switch back to the master website</a></p>';
+					echo '<p><a href="' . $slave->site_url . '/wp-admin/admin.php?page=cerber-nexus" target="_blank">Check the slave settings on ' . $slave->site_name . '</a></p>';
+				}
+				?>
+
+                <h3>Diagnostic information</h3>
+                <p class="crb-monospace" style="font-size: 90%">
+                    HTTP code: <?php echo $nexus_last_http; ?><br/>
+                    Response size: <?php echo $nexus_last_curl['size_download']; ?><br/>
+                    IP address: <?php echo $ip; ?><br/>
+                    Hostname: <?php echo $hostname; ?><br/>
+					<?php
+
+					foreach ( $nexus_last_curl as $key => $val ) {
+						if ( is_scalar( $val ) ) {
+							echo $key . ': ' . htmlspecialchars( $val, ENT_SUBSTITUTE );
+						}
+						else {
+							echo $key . ': ';
+							print_r( $val );
+						}
+						echo '<br/>';
+					}
+					?>
+                </p>
+
+				<?php
+
+				if ( $http_content = $network->get_error_data() ) {
+					echo '<h3>Response from the remote website</h3>';
+					echo '<div class="crb-monospace" style="width: 100%; max-height: 50vh; overflow: auto; background-color: #fff; border: 2px solid #aaa; padding: 1em;">' . htmlentities( $http_content, ENT_SUBSTITUTE ) . '</div>';
+				}
+				?>
+
+            </div>
+			<?php
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param $payload array
+	 * @param $slave object
+	 *
+	 * @return bool|array|string|WP_Error
+	 */
+	static function net_send_request( $payload, $slave ) {
+		global $nexus_last_http, $nexus_last_curl;
+
+		CRB_Nexus::$net_data = array();
+
+		if ( ! is_super_admin()
+		     && ! ( defined( 'CRB_DOING_BG_TASK' ) && CRB_DOING_BG_TASK ) ) {
+			return new WP_Error( 'no_context', 'Not permitted in this context' );
+		}
+
+		if ( empty( $slave->site_pass )
+		     || empty( $slave->site_url )
+		     || empty( $slave->x_field )
+		     || empty( $slave->x_num )
+		     || ( ! $field_names = nexus_get_fields( $slave ) ) ) {
+			return new WP_Error( 'invalid_slave', 'Slave configuration is corrupted for the slave ' . $slave->id );
+		}
+
+		array_walk_recursive( $payload, function ( &$e ) {
+			$e = str_replace( array( "\r\n", "\n", "\r" ), '<br/>', $e ); // preserve new lines before json_encode
+		} );
+
+		$data = array();
+		$data['seal'] = nexus_seal();
+		$data['params'] = $_GET;
+		$data['base'] = ( ! is_multisite() ) ? admin_url() : network_admin_url();
+		$data['assets'] = CRB_Globals::$assets_url;
+		$data['is_post'] = cerber_is_http_post();
+		$data['payload'] = $payload;
+		$data[ rand() ] = rand(); // random checksum for identical requests
+
+		if ( crb_get_settings( 'master_locale' ) ) {
+			$data['master_locale'] = ( crb_get_settings( 'admin_lang' ) ) ? 'en_US' : get_user_locale();
+		}
+
+		if ( ! cerber_is_wp_ajax()
+		     && ! cerber_is_wp_cron() ) {
+			$data['page'] = crb_admin_get_page();
+			$data['tab'] = crb_admin_get_tab();
+			$data['at_site'] = ( ! crb_get_settings( 'master_at_site' ) ) ? '' : ' @ ' . $slave->site_name;
+			$data['screen'] = array( 'per_page' => crb_admin_get_per_page() );
+		}
+
+		$x_num = array_shift( $field_names );
+
+		$fields = array();
+
+		$fields[ $field_names[0] ] = json_encode( $data, JSON_UNESCAPED_UNICODE );
+		if ( JSON_ERROR_NONE != json_last_error() ) {
+			return new WP_Error( 'json_error', 'Unable to encode request: ' . json_last_error_msg() );
+		}
+
+		$auth = hash( 'sha512', $slave->site_pass . sha1( $fields[ $field_names[0] ] ) );
+
+		foreach ( $field_names as $i => $name ) {
+			if ( isset( $fields[ $name ] ) ) {
+				continue;
+			}
+			if ( $x_num == $i ) {
+				$fields[ $name ] = $auth;
+			}
+			else {
+				$fields[ $name ] = str_shuffle( $auth );
+			}
+		}
+
+		$curl = @curl_init();
+		if ( ! $curl ) {
+			return new WP_Error( 'no_curl', 'Unable to init cURL library. Enable PHP cURL extension in your hosting control panel.' );
+		}
+
+		nexus_diag_log( 'Sending HTTP request to ' . $slave->site_url );
+
+		$curl_opt = array(
+			CURLOPT_URL               => $slave->site_url,
+			CURLOPT_FOLLOWLOCATION    => 0,
+			CURLOPT_POST              => true,
+			CURLOPT_POSTFIELDS        => http_build_query( $fields ),
+			CURLOPT_RETURNTRANSFER    => true,
+			CURLOPT_CONNECTTIMEOUT    => 10, // including domain resolving
+			CURLOPT_TIMEOUT           => 15, // including CURLOPT_CONNECTTIMEOUT
+			CURLOPT_DNS_CACHE_TIMEOUT => 1 * 3600,
+			CURLOPT_SSL_VERIFYHOST    => 2,
+			CURLOPT_SSL_VERIFYPEER    => true,
+			//CURLOPT_CERTINFO          => 1, doesn't work
+			//CURLOPT_VERBOSE          => 1,
+			CURLOPT_CAINFO            => ABSPATH . WPINC . '/certificates/ca-bundle.crt',
+			CURLOPT_ENCODING          => '', // allows built-in compressions
+		);
+
+		if ( defined( 'CERBER_HUB_UA' ) ) {
+			$curl_opt[ CURLOPT_USERAGENT ] = (string) CERBER_HUB_UA;
+		}
+
+		curl_setopt_array( $curl, $curl_opt );
+
+		$response = @curl_exec( $curl );
+		$curl_info = curl_getinfo( $curl );
+		$code = intval( curl_getinfo( $curl, CURLINFO_HTTP_CODE ) );
+		$nexus_last_http = $code;
+		$nexus_last_curl = $curl_info;
+
+		curl_close( $curl );
+
+		if ( $code == 200 ) {
+			nexus_diag_log( 'HTTP 200 OK' );
+			nexus_diag_log( 'Slave data size ' . $curl_info['size_download'] . ', receiving took ' . $curl_info['total_time'] . ' seconds' );
+		}
+
+		nexus_diag_log( 'Domain name lookup took ' . $curl_info['namelookup_time'] . ' seconds' );
+
+		if ( $code != 200 ) {
+			nexus_diag_log( '=== NETWORK SUBSYSTEM ===' );
+			nexus_diag_log( $curl_info );
+
+			/*if ( $code != 403 ) {
+				cerber_update_set( 'bad_response_' . $slave->id, array( time(), $code ) );
+			}*/
+
+			return new WP_Error( 'nexus_http_error', $code, substr( $response, 0, 3000 ) );
+		}
+
+		$ret = json_decode( $response, true );
+		if ( JSON_ERROR_NONE != json_last_error() ) {
+			return new WP_Error( 'nexus_json_decode_error', 'Unable to decode the response from the remote website: ' . json_last_error_msg(), substr( $response, 0, 3000 ) );
+		}
+
+		if ( is_array( $ret['payload'] ) ) {
+			if ( isset( $ret['scheme'] ) ) { // @since 8.0.5
+				$sha = sha1( json_encode( $ret['payload'], JSON_UNESCAPED_UNICODE ) );
+			}
+			else {
+				$sha = sha1( serialize( $ret['payload'] ) ); // 8.0
+			}
+		}
+		else {
+			$sha = sha1( $ret['payload'] );
+		}
+
+		if ( ! hash_equals( $ret['echo'], hash( 'sha512', $slave->site_echo . $sha ) ) ) {
+			return new WP_Error( 'checksum_error', 'Checksum mismatch: the slave response has been altered or security tokens mismatch.' );
+		}
+
+		nexus_diag_log( 'Slave ' . $slave->site_name . ' has generated response for ' . $ret['p_time'] );
+
+		nexus_diag_log( '=== NETWORK HAS FINISHED OK ===' );
+
+		CRB_Nexus::$net_data = $ret;
+
+		return $ret;
+	}
+
+	/**
+	 * @return array
+	 */
+	static function get_remote_data() {
+		return self::$net_data;
+	}
+}
 
 function nexus_show_slaves() {
 	//load_nexus_test_slaves();
@@ -478,7 +853,7 @@ function nexus_show_remote_page() {
 	if ( cerber_is_http_post()
 		 && ( $m = cerber_get_post( 'cerber_nexus_seal' ) )
 		 && sha1( $slave->id . '|' . get_current_user_id() ) === $m ) {
-		$response = nexus_send( array(
+		$response = CRB_Nexus::send( array(
 			'type' => 'submit',
 			'data' => array(
 				'post' => $_POST,
@@ -486,7 +861,7 @@ function nexus_show_remote_page() {
 		) );
 	}
 	else {
-		$response = nexus_send( array(
+		$response = CRB_Nexus::send( array(
 			'type' => 'get_page',
 			'data' => array(
 			)
@@ -498,7 +873,7 @@ function nexus_show_remote_page() {
 
 	if ( cerber_is_http_post()
 	     && ( nexus_seal( crb_array_get( $_POST, 'cerber_nexus_seal', 'none' ) ) ) ) {
-		$response = nexus_send( array(
+		$response = CRB_Nexus::send( array(
 			'type' => 'submit',
 			'data' => array(
 				'post' => $_POST,
@@ -507,7 +882,7 @@ function nexus_show_remote_page() {
 	}
 
 	// A separate request to render the page cause settings cache is updated now
-	$response = nexus_send( array(
+	$response = CRB_Nexus::send( array(
 		'type' => 'get_page'
 	) );
 
@@ -525,7 +900,7 @@ function nexus_send_admin_request() {
 	          && empty( $_POST['cerber_nonce'] ) ) ) {
 		return;
 	}
-	$response = nexus_send( array(
+	$response = CRB_Nexus::send( array(
 		'type' => 'manage'
 	) );
 }
@@ -548,7 +923,7 @@ function nexus_ajax_router() {
 
 	check_ajax_referer( 'crb-ajax-admin', 'ajax_nonce' );
 
-	$response = nexus_send( array(
+	$response = CRB_Nexus::send( array(
 		'type'  => 'ajax',
 		//'cache' => false,
 		'data'  => array(
@@ -573,197 +948,7 @@ function nexus_ajax_router() {
  * @return bool|mixed
  */
 function nexus_send( $request, $slave_id = null ) {
-    global $nexus_last_http, $nexus_last_curl, $nexus_slave_name, $nexus_slave_id;
-
-	nexus_diag_log( '/\/ Initiating ' . $request['type'] . ' request to the slave' . ( ( $slave_id ) ? ' #' . $slave_id : ' from context' ) );
-
-	$slave  = ( $slave_id ) ? nexus_get_slave_data( $slave_id ) : nexus_get_context();
-
-	if ( ! $slave ) {
-		return false;
-	}
-
-	$network = nexus_net_send_request( $request, $slave );
-
-	nexus_update_slave( $slave->id, array( 'last_http' => $nexus_last_http ) );
-	$nexus_slave_id = $slave->id;
-	$nexus_slave_name = $slave->site_name;
-
-	if ( ! is_wp_error( $network ) ) {
-
-		nexus_process_extra( $network, $slave );
-
-		if ( ! empty( $network['payload']['error'] ) ) { // A critical error on the slave
-			$m = 'An error occurred on ' . $slave->site_name . ': ' . htmlspecialchars( $network['payload']['error'][1], ENT_SUBSTITUTE );
-			cerber_admin_notice( $m );
-			nexus_diag_log( $m );
-			return '';
-		}
-
-		$response = $network['payload'];
-
-		if ( cerber_is_wp_ajax() ) {
-			return $response;
-		}
-
-		if ( isset( $response['redirect'] ) ) {
-			if ( $redirect_to = crb_array_get( $response, 'redirect_url' ) ) {
-				nexus_diag_log( '> > > Redirecting to ' . $redirect_to );
-				// TODO should we use wp_safe_redirect()???
-				header( 'Location: ' . $redirect_to, true, 302 );
-				exit;
-			}
-			else {
-				cerber_safe_redirect( crb_array_get( $response, 'remove_args' ) );
-			}
-		}
-
-		return $response;
-	}
-	else {
-
-		$codes = array(
-			301 => 'Unexpected HTTP redirection on the slave. Check if WP Cerber is installed and active on the slave website.',
-			302 => 'Unexpected HTTP redirection on the slave. Check if WP Cerber is installed and active on the slave website.',
-			403 => 'Access to the slave website is denied.',
-			500 => 'Remote website (web server) is unable to proceed due to a fatal software (PHP) error. Check the server error log on the slave website.'
-		);
-
-		$causes = array(
-			'The remote website is configured to be managed from an IP address that does not match the IP address of this master website.',
-			'A security plugin on the remote website is interfering with the WP Cerber plugin',
-			'A directive in the .htaccess file on the remote website is blocking incoming requests',
-			'A firewall or a proxy service (like Cloudflare) is blocking (filtering out) incoming requests to the remote website',
-			'The IP address of this master is locked out or in the Black Access List on the remote website',
-
-			'The slave mode on the remote website has been re-enabled making the security token saved on this master invalid',
-			'The slave mode has been disabled on the remote website',
-			'The IP address of this master website does not match the one set in the slave settings on the remote website',
-			'The WP Cerber plugin has been deactivated on the slave website',
-
-			'The remote server is redirecting incoming requests to another website',
-			'The domain name of the slave website has been changed',
-
-			'The remote server is down or not responding',
-			'The SSL certificate of the slave website is expired or invalid',
-            'There is no network connectivity between this master server and the server on which the slave website is running',
-		);
-
-		$kb = array(
-			// 200
-			'nexus_json_decode_error' => array( 5, 6, 2, 7, 1 ),
-			'checksum_error'          => array( 5 ),
-
-			// Not 200
-			0                         => array( 9, 10, 11, 12, 13 ),
-			301                       => array( 9, 10, 12 ),
-			302                       => array( 9, 10, 12 ),
-			403                       => array( 0, 1, 2, 3, 4 ),
-		);
-
-		if ( $network->get_error_code() == 'nexus_http_error' ) {
-			if ( ! $error = crb_array_get( $codes, $nexus_last_http ) ) {
-				$desc  = $nexus_last_http . ' ' . get_status_header_desc( $nexus_last_http );
-				$error = '<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/' . $nexus_last_http . '" target="_blank">' . $desc . '</a>';
-			}
-			else {
-				$error = $nexus_last_http . ' ' . $error;
-			}
-			$error = 'HTTP ERROR ' . $error;
-		}
-		else {
-			$error = $network->get_error_message();
-		}
-
-		nexus_diag_log( 'NETWORK ERROR: ' . $error );
-
-		$parse  = parse_url( $slave->site_url );
-		$domain = $parse['host'];
-		$ip     = gethostbyname( $domain );
-		if ( ! cerber_is_ip( $ip ) ) {
-			$ip = 'Unknown. Unable to resolve the IP address. Possibly the domain ' . $domain . ' is not delegated.';
-			$hostname = 'Unknown';
-		}
-		else {
-			$hostname = gethostbyaddr( $ip );
-		}
-
-		?>
-        <div style="padding: 4em;">
-
-            <h3><?php _e( 'Invalid response from the slave website', 'wp-cerber' ); ?></h3>
-            <p style="color: red; font-weight: bold;"><?php echo $error; ?></p>
-            Remote website: <?php echo $slave->site_name; ?><br/>
-            Remote website URL: <?php echo $slave->site_url; ?><br/>
-            <p style="font-weight: bold;">This may be caused by a number of reasons</p>
-            <ul style="list-style: disc;">
-				<?php
-
-				if ( ! $kb_filter = crb_array_get( $kb, $network->get_error_code() ) ) {
-					if ( ! $kb_filter = crb_array_get( $kb, $nexus_last_http ) ) {
-						$kb_filter = null;
-					}
-				}
-
-				$show = array();
-				if ( $kb_filter ) {
-					foreach ( $kb_filter as $key ) {
-						$show[] = $causes[ $key ];
-					}
-					//$show = array_intersect_key( $causes, array_flip( $kb_filter ) );
-				}
-
-				if ( ! $show ) {
-					$show = $causes;
-				}
-
-				echo '<li>' . implode( '</li><li>', $show ) . '</li>';
-
-				?>
-            </ul>
-
-            <?php
-			$slave = nexus_get_context();
-			if ( $slave ) {
-				echo '<p><a href="' . nexus_get_back_link() . '">Switch back to the master website</a></p>';
-				echo '<p><a href="' . $slave->site_url . '/wp-admin/admin.php?page=cerber-nexus" target="_blank">Check the slave settings on ' . $slave->site_name . '</a></p>';
-			}
-            ?>
-
-            <h3>Diagnostic information</h3>
-            <p class="crb-monospace" style="font-size: 90%">
-                HTTP code: <?php echo $nexus_last_http; ?><br/>
-                Response size: <?php echo $nexus_last_curl['size_download']; ?><br/>
-                IP address: <?php echo $ip; ?><br/>
-                Hostname: <?php echo $hostname; ?><br/>
-		        <?php
-
-		        foreach ( $nexus_last_curl as $key => $val ) {
-			        if ( is_scalar( $val ) ) {
-				        echo $key . ': ' . htmlspecialchars( $val, ENT_SUBSTITUTE );
-			        }
-			        else {
-				        echo $key . ': ';
-				        print_r( $val );
-			        }
-			        echo '<br/>';
-		        }
-		        ?>
-                </p>
-
-            <?php
-
-            if ( $http_content = $network->get_error_data() ) {
-	            echo '<h3>Response from the remote website</h3>';
-	            echo '<div class="crb-monospace" style="width: 100%; max-height: 50vh; overflow: auto; background-color: #fff; border: 2px solid #aaa; padding: 1em;">' . htmlentities( $http_content, ENT_SUBSTITUTE ) . '</div>';
-            }
-            ?>
-
-        </div>
-		<?php
-	}
-
-	return false;
+	return CRB_Nexus::send( $request, $slave_id );
 }
 
 function nexus_process_extra( $data, $slave ) {
@@ -873,159 +1058,6 @@ function nexus_get_update( $plugin, $version = null ) {
 	}
 
 	return $update;
-}
-
-/**
- * @param $payload array
- * @param $slave object
- *
- * @return bool|array|string|WP_Error
- */
-function nexus_net_send_request( $payload, $slave ) {
-	global $nexus_last_http, $nexus_last_curl;
-
-	if ( ! is_super_admin()
-	     && ! ( defined( 'CRB_DOING_BG_TASK' ) && CRB_DOING_BG_TASK ) ) {
-		return new WP_Error( 'no_context', 'Not permitted in this context' );
-	}
-
-	if ( empty( $slave->site_pass )
-	     || empty( $slave->site_url )
-	     || empty( $slave->x_field )
-	     || empty( $slave->x_num )
-	     || ( ! $field_names = nexus_get_fields( $slave ) ) ) {
-		return new WP_Error( 'invalid_slave', 'Slave configuration is corrupted for the slave ' . $slave->id );
-	}
-
-	array_walk_recursive( $payload, function ( &$e ) {
-		$e = str_replace( array( "\r\n", "\n", "\r" ), '<br/>', $e ); // preserve new lines before json_encode
-	} );
-
-	$data            = array();
-	$data['seal']    = nexus_seal();
-	$data['params']  = $_GET;
-	$data['base']    = ( ! is_multisite() ) ? admin_url() : network_admin_url();
-	$data['assets']  = CRB_Globals::$assets_url;
-	$data['is_post'] = cerber_is_http_post();
-	$data['payload'] = $payload;
-	$data[ rand() ]  = rand(); // random checksum for identical requests
-
-	if ( crb_get_settings( 'master_locale' ) ) {
-		$data['master_locale'] = ( crb_get_settings( 'admin_lang' ) ) ? 'en_US' : get_user_locale();
-	}
-
-	if ( ! cerber_is_wp_ajax()
-	     && ! cerber_is_wp_cron() ) {
-		$data['page']    = crb_admin_get_page();
-		$data['tab']     = crb_admin_get_tab();
-		$data['at_site'] = ( ! crb_get_settings( 'master_at_site' ) ) ? '' : ' @ ' . $slave->site_name;
-		$data['screen']  = array( 'per_page' => crb_admin_get_per_page() );
-	}
-
-	$x_num = array_shift( $field_names );
-
-	$fields = array();
-
-	$fields[ $field_names[0] ] = json_encode( $data, JSON_UNESCAPED_UNICODE );
-	if ( JSON_ERROR_NONE != json_last_error() ) {
-		return new WP_Error( 'json_error', 'Unable to encode request: ' . json_last_error_msg() );
-	}
-
-	$auth = hash( 'sha512', $slave->site_pass . sha1( $fields[ $field_names[0] ] ) );
-
-	foreach ( $field_names as $i => $name ) {
-		if ( isset( $fields[ $name ] ) ) {
-			continue;
-		}
-		if ( $x_num == $i ) {
-			$fields[ $name ] = $auth;
-		}
-		else {
-			$fields[ $name ] = str_shuffle( $auth );
-		}
-	}
-
-	$curl = @curl_init();
-	if ( ! $curl ) {
-		return new WP_Error( 'no_curl', 'Unable to init cURL library. Enable PHP cURL extension in your hosting control panel.' );
-	}
-
-	nexus_diag_log( 'Sending HTTP request to ' . $slave->site_url );
-
-	$curl_opt = array(
-		CURLOPT_URL               => $slave->site_url,
-		CURLOPT_FOLLOWLOCATION    => 0,
-		CURLOPT_POST              => true,
-		CURLOPT_POSTFIELDS        => http_build_query( $fields ),
-		CURLOPT_RETURNTRANSFER    => true,
-		CURLOPT_CONNECTTIMEOUT    => 10, // including domain resolving
-		CURLOPT_TIMEOUT           => 15, // including CURLOPT_CONNECTTIMEOUT
-		CURLOPT_DNS_CACHE_TIMEOUT => 1 * 3600,
-		CURLOPT_SSL_VERIFYHOST    => 2,
-		CURLOPT_SSL_VERIFYPEER    => true,
-		//CURLOPT_CERTINFO          => 1, doesn't work
-		//CURLOPT_VERBOSE          => 1,
-		CURLOPT_CAINFO            => ABSPATH . WPINC . '/certificates/ca-bundle.crt',
-		CURLOPT_ENCODING          => '', // allows built-in compressions
-	);
-
-	if ( defined( 'CERBER_HUB_UA' ) ) {
-		$curl_opt[ CURLOPT_USERAGENT ] = (string) CERBER_HUB_UA;
-	}
-
-	curl_setopt_array( $curl, $curl_opt );
-
-	$response = @curl_exec( $curl );
-	$curl_info = curl_getinfo( $curl );
-	$code = intval( curl_getinfo( $curl, CURLINFO_HTTP_CODE ) );
-	$nexus_last_http = $code;
-	$nexus_last_curl = $curl_info;
-
-	curl_close( $curl );
-
-	if ( $code == 200 ) {
-		nexus_diag_log( 'HTTP 200 OK' );
-		nexus_diag_log( 'Slave data size ' . $curl_info['size_download'] . ', receiving took ' . $curl_info['total_time'] . ' seconds' );
-	}
-
-	nexus_diag_log( 'Domain name lookup took ' . $curl_info['namelookup_time'] . ' seconds' );
-
-	if ( $code != 200 ) {
-		nexus_diag_log( '=== NETWORK SUBSYSTEM ===' );
-		nexus_diag_log( $curl_info );
-		/*if ( $code != 403 ) {
-			cerber_update_set( 'bad_response_' . $slave->id, array( time(), $code ) );
-		}*/
-
-		return new WP_Error( 'nexus_http_error', $code, substr( $response, 0, 3000 ) );
-	}
-
-	$ret = json_decode( $response, true );
-	if ( JSON_ERROR_NONE != json_last_error() ) {
-		return new WP_Error( 'nexus_json_decode_error', 'Unable to decode the response from the remote website: ' . json_last_error_msg(), substr( $response, 0, 3000 ) );
-	}
-
-	if ( is_array( $ret['payload'] ) ) {
-		if ( isset( $ret['scheme'] ) ) { // @since 8.0.5
-			$sha = sha1( json_encode( $ret['payload'], JSON_UNESCAPED_UNICODE ) );
-		}
-		else {
-			$sha = sha1( serialize( $ret['payload'] ) ); // 8.0
-		}
-	}
-	else {
-		$sha = sha1( $ret['payload'] );
-	}
-
-	if ( ! hash_equals( $ret['echo'], hash( 'sha512', $slave->site_echo . $sha ) ) ) {
-		return new WP_Error( 'checksum_error', 'Checksum mismatch: the slave response has been altered or security tokens mismatch.' );
-	}
-
-	nexus_diag_log( 'Slave ' . $slave->site_name . ' has generated response for ' . $ret['p_time'] );
-
-	nexus_diag_log( '=== NETWORK HAS FINISHED OK ===' );
-
-    return $ret;
 }
 
 function nexus_set_context() {
@@ -1145,7 +1177,7 @@ function nexus_bg_upgrade( $ids, $plugins ) {
 }
 
 function nexus_do_upgrade( $slave_id, $plugins, $display_errors = false ) {
-	$response = nexus_send( array(
+	$response = CRB_Nexus::send( array(
 		'type'    => 'sw_upgrade',
 		'sw_type' => 'plugins',
 		'list'    => $plugins

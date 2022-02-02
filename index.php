@@ -267,7 +267,18 @@ echo $result;
 				jQuery("html").removeClass("only");
 			}, 500);
 		});
-
+    jQuery(function () {
+        nightMode();
+        mainSlider();
+        menuBtn();
+        scrollEl();
+        stickyDiv();
+        returnToTop();
+        slotScreensSlider();
+        maximize();
+        openPopup();
+        toggleButtons();
+    });
 	});
 	</script>';
 // $cached = fopen( $cachefile, 'w' );

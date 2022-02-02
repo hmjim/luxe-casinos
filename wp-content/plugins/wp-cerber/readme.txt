@@ -4,8 +4,8 @@ Tags: security, malware scanner, antispam, firewall, limit login attempts, custo
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SQ5EC8WQP654Q&source=url
 Requires at least: 4.9
 Requires PHP: 7.0
-Tested up to: 5.8
-Stable tag: 8.9.5
+Tested up to: 5.9
+Stable tag: 8.9.6
 License: GPLv2
 
 Protection against hacker attacks and bots. Malware scanner & integrity checker. User activity log. Antispam reCAPTCHA. Limit login attempts.
@@ -309,13 +309,25 @@ To get access to your dashboard you need to copy the WP Cerber Reset folder to t
 6. White and Black IP access lists allow you to restrict access from a particular IP address, network or IP range.
 7. Hardening WordPress: disable REST API, XML-RPC and stop user enumeration.
 8. Powerful email, mobile and browser notifications for WordPress events.
-9. Stop spammer: visible/invisible reCAPTCHA for WooCommerce and WordPress forms - no spam comments anymore.
+9. Stop spammers: visible/invisible reCAPTCHA for WooCommerce and WordPress forms - no spam comments anymore.
 10. You can export and import security settings and IP Access Lists on the Tools screen.
 11. Beautiful widget for the WP dashboard to keep an eye on things. Get quick analytic with trends over last 24 hours.
 12. WP Cerber adds four new columns on the WordPress Users screen: Date of registration, Date of last login, Number of failed login attempts and Number of comments. To get more information just click on the appropriate link.
 
-
 == Changelog ==
+
+= 8.9.6 =
+* New: A new [alert creation dialog with a set of new alert settings](https://wpcerber.com/wordpress-notifications-made-easy/) enables you to create alerts with new limits: an expiration time, the maximum number of alerts allowed to send, and optional rate-limiting. The alert conditions can include the URL of a request now.
+* New: Deleting of [WordPress application passwords](https://wpcerber.com/wordpress-application-passwords-how-to/) is logged now.
+* New: Ability to monitor [anti-spam](https://wpcerber.com/antispam-for-wordpress-contact-forms/), reCAPTCHA, and several other setting-specific events using links on the settings pages.
+* Improved: Meaningful and actionable messages on the log screens if no activity has been found in the logs using a given search filter.
+* Improved: If a WP Cerber feature requires a newer version of WordPress, such a feature will not be shown in the plugin admin interface anymore.
+* Fixed: A fatal PHP error occurs while logging in on a version of WordPress older than 5.5 and a user has more than one active session.
+* Fixed: A fatal PHP error occurs while using the reset password form on a version of WordPress older than 5.4.
+* Fixed: While opening the Tools admin page, a PHP error might occur on some web servers.
+* Fixed: While rendering the Activity tab, depending on the activities logged, the PHP warning can be logged in the server error log.
+* Fixed: When [managing WP Cerber on a remote website via Cerber.Hub](https://wpcerber.com/manage-multiple-websites/), the admin page footer incorrectly displays the version of WP Cerber installed on the main website.
+* Fixed: If the Site Title of a website contains some special characters like apostrophes, the subject of [email alerts and notifications](https://wpcerber.com/wordpress-notifications-made-easy/) contains such characters in encoded form.
 
 = 8.9.5 =
 * New: A new setting for [WP Cerber's anti-spam engine](https://wpcerber.com/antispam-for-wordpress-contact-forms/): "Disable bot detection engine for IP addresses in the White IP Access List".

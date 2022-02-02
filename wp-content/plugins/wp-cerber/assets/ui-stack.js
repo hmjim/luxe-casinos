@@ -115,6 +115,30 @@ jQuery(document).ready(function ($) {
     window.uis_loader_remove = function (area) {
         uis_overlay_loader_off(area);
     }
+
+    // Pop-up Dialogs -------------------------------------------------------------------
+
+    $(".crb-popup-dialog-open").on('click', function (event) {
+
+        let popup_element = '#' + $(this).data('popup_element_id');
+
+        $(popup_element + ' .crb-popup-dialog-close').on('click', function () {
+            $.magnificPopup.close();
+            event.preventDefault();
+        });
+
+        $.magnificPopup.open({
+            type: 'inline',
+            items: {
+                src: popup_element
+            },
+            mainClass: 'crb-popup-dialog-wrap',
+            closeOnContentClick: false,
+            preloader: false,
+        });
+
+        event.preventDefault();
+    });
 });
 
 function __is_empty(thing) {
