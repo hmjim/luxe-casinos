@@ -30,4 +30,4 @@ Disallow: /2022/
 Allow: /wp-content/uploads/
 Allow: *.css
 Allow: *.js
-Host: luxe-casinos.azurewebsites.net
+Host: luxe-casinoz.azurewebsites.net
