@@ -298,16 +298,16 @@ echo $result;
     }
 
 
-    let menu = jQuery(".header-menu");
-    let btn = jQuery(".menu-toggle");
+    menu = jQuery(".header-menu");
+    btn = jQuery(".menu-toggle");
 
     btn.click(function (e) {
         e.preventDefault();
         menu.toggleClass("on");
         jQuery(this).toggleClass("on")
     });
-    let menu = jQuery(".header-menu");
-    let btn = jQuery(".menu-toggle");
+    menu = jQuery(".header-menu");
+    btn = jQuery(".menu-toggle");
 
     btn.click(function (e) {
         e.preventDefault();
