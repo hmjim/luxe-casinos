@@ -45,7 +45,8 @@ function toggleButtons() {
 
             toggleButton.addEventListener('click', function (e) {
                 e.preventDefault();
-                const container = document.querySelector('.' + this.getAttribute('data-toggle-container'))
+                const container = document.querySelector('.' + this.getAttribute('data-toggle-container'));
+                console.log(container);
                 if (this.classList.contains('is-open') && container.classList.contains('is-open')) {
                     this.classList.remove('is-open');
                     container.classList.remove('is-open');
