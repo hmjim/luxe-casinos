@@ -270,14 +270,14 @@ echo $result;
 
         nightMode();
         mainSlider();
-        menuBtn();
+        // menuBtn();
         scrollEl();
         stickyDiv();
         returnToTop();
         slotScreensSlider();
         maximize();
         openPopup();
-        toggleButtons();
+        // toggleButtons();
     const toggleButtons = document.querySelectorAll(".js-toggle-btn");
 
     if (toggleButtons.length) {
