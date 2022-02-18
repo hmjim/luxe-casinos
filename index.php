@@ -285,7 +285,7 @@ echo $result;
 
             toggleButton.addEventListener("click", function (e) {
                 e.preventDefault();
-                const container = document.querySelector('.' + this.getAttribute('data-toggle-container'))
+                const container = document.querySelector('.' + this.getAttribute("data-toggle-container"))
                 if (this.classList.contains("is-open") && container.classList.contains("is-open")) {
                     this.classList.remove("is-open");
                     container.classList.remove("is-open");
@@ -312,7 +312,7 @@ echo $result;
     btn.click(function (e) {
         e.preventDefault();
         menu.toggleClass("on");
-        jQuery(this).toggleClass("on")
+        jQuery(this).toggleClass("on");
     });	
 	});
 	</script>';
