@@ -267,7 +267,7 @@ echo $result;
 				jQuery("html").removeClass("only");
 			}, 500);
 		});
-    jQuery(function () {
+
         nightMode();
         mainSlider();
         menuBtn();
@@ -278,7 +278,42 @@ echo $result;
         maximize();
         openPopup();
         toggleButtons();
+    const toggleButtons = document.querySelectorAll('.js-toggle-btn');
+
+    if (toggleButtons.length) {
+        toggleButtons.forEach(toggleButton => {
+
+            toggleButton.addEventListener("click", function (e) {
+                e.preventDefault();
+                const container = document.querySelector('.' + this.getAttribute('data-toggle-container'))
+                if (this.classList.contains("is-open") && container.classList.contains("is-open")) {
+                    this.classList.remove("is-open");
+                    container.classList.remove("is-open");
+                } else {
+                    this.classList.add("is-open");
+                    container.classList.add("is-open");
+                }
+            })
+        });
+    }
+
+
+    let menu = jQuery(".header-menu");
+    let btn = jQuery(".menu-toggle");
+
+    btn.click(function (e) {
+        e.preventDefault();
+        menu.toggleClass("on");
+        jQuery(this).toggleClass("on")
     });
+    let menu = jQuery(".header-menu");
+    let btn = jQuery(".menu-toggle");
+
+    btn.click(function (e) {
+        e.preventDefault();
+        menu.toggleClass("on");
+        jQuery(this).toggleClass("on")
+    });	
 	});
 	</script>';
 // $cached = fopen( $cachefile, 'w' );
