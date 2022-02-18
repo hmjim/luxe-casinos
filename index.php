@@ -278,7 +278,7 @@ echo $result;
         maximize();
         openPopup();
         toggleButtons();
-    const toggleButtons = document.querySelectorAll('.js-toggle-btn');
+    const toggleButtons = document.querySelectorAll(".js-toggle-btn");
 
     if (toggleButtons.length) {
         toggleButtons.forEach(toggleButton => {
